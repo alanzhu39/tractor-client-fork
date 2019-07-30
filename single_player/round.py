@@ -9,7 +9,7 @@ current attacker's points
 also play the round:
 dealing, compare cards, and playing
 '''
-from single_player.deck import *
+from deck import *
 class Round(object):
     '''
     player = list of Player (size = 4)
@@ -24,7 +24,9 @@ class Round(object):
             if players[i].zhuang_jia:
                 self.zhuang_jia_id = i
                 set_zhuang_jia = True
-        assert set_zhuang_jia
+        # draw for zhuang jia
+        if not set_zhuang_jia:
+            1
 
         self.trump_suit = "none"
         self.trump_suit_cnt = 0
@@ -34,7 +36,9 @@ class Round(object):
         self.deck.shuffle()
         self.current_drawer = self.zhuang_jia_id
         while len(self.deck) > self.num_di_pai:
-            self.players[self.current_drawer].draw()
+            self.players[self.current_drawer].draw(self.deck.pop())
+            print(self.players[self.current_drawer].name)
+            self.players[self.current_drawer].print_hand()
             self.liang_query()
 
     def liang_query(self):
@@ -64,7 +68,7 @@ class Round(object):
         1
 
     def play_round(self):
-        Round.deal()
+        self.deal()
 
     def turn_helper(self, start):
         hand_size=len(self.players[0].gethand())

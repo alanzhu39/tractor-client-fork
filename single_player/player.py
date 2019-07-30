@@ -4,12 +4,11 @@ player's hand
 '''
 import operator
 class Player():
-    def __init__(self, name, trump_suit = 'spades', trump_card, zhuang_jia = False, attacker = False, hand = []):
+    def __init__(self, name, trump_suit = 'spades', zhuang_jia = False, attacker = False, hand = []):
         self.name = name
         self.zhuang_jia = zhuang_jia
         self.hand = hand
         self.trump_suit = trump_suit
-        self.trump_card = trump_card
         self.attacker = attacker
 
     def __str__(self):
@@ -25,7 +24,7 @@ class Player():
         return self.trump_card
 
     def get_zhuang_jia(self):
-        return self.zhaung_jia
+        return self.zhuang_jia
 
     def get_hand(self):
         return self.hand
@@ -42,8 +41,8 @@ class Player():
     def set_trump_card(self, trump_card):
         self.trump_card = trump_card
 
-    def set_zhaung_jia(self, zhuang_jia):
-        self.zhuang_jia = zhaung_jia
+    def set_zhuang_jia(self, zhuang_jia):
+        self.zhuang_jia = zhuang_jia
 
     def set_hand(self, hand):
         self.hand = hand
@@ -57,7 +56,7 @@ class Player():
     def print_hand(self):
         for card in self.hand:
             print (card,end=' ')
-		print()
+        print('')
 
     def draw(self, card):
         #draws a card and checks to see if the player wants to declare trump suit
@@ -98,7 +97,7 @@ class Player():
             return 1
         if card2.rank == trump_card and card2.suit == trump_suit:
             return -1
-        if card1.rank == trump_card and card2.rank = trump_card:
+        if card1.rank == trump_card and card2.rank == trump_card:
             return 0
         if card1.rank == trump_card:
             return 1
