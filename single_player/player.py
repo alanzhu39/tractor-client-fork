@@ -3,7 +3,7 @@ Keep track of:
 player's hand
 '''
 import operator
-class player():
+class Player():
     def __init__(self, name, trump_suit = 'spades', trump_card, zhuang_jia = False, attacker = False, hand = []):
         self.name = name
         self.zhuang_jia = zhuang_jia
@@ -56,7 +56,8 @@ class player():
 
     def print_hand(self):
         for card in self.hand:
-            print (card)
+            print (card,end=' ')
+		print()
 
     def draw(self, card):
         #draws a card and checks to see if the player wants to declare trump suit
