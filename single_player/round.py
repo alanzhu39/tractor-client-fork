@@ -9,7 +9,7 @@ current attacker's points
 also play the round:
 dealing, compare cards, and playing
 '''
-from deck import *
+from single_player.deck import *
 class Round(object):
     '''
     player = list of Player (size = 4)
@@ -33,8 +33,8 @@ class Round(object):
         self.deck = Deck()
         self.deck.shuffle()
         self.current_drawer = self.zhuang_jia_id
-        while len(deck) > num_di_pai:
-            players[current_drawer].draw()
+        while len(self.deck) > self.num_di_pai:
+            self.players[self.current_drawer].draw()
             self.liang_query()
 
     def liang_query(self):
