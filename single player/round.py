@@ -13,7 +13,7 @@ from deck import *
 class Round(object):
     '''
     player = list of Player (size = 4)
-    ''''
+    '''
     num_di_pai = 8
     def __init__(self, players):
         assert(len(players) == 4)
@@ -37,7 +37,15 @@ class Round(object):
     def liang_query(self):
         # format is "suit cnt" or "SJo 2" or "BJo 2"
         print("Liang?")
-        response = input()
+        response = input().split()
+        if len(response) != 2:
+            return
+        if response[1] != "1" and response[1] != "2":
+            return
+        if (response[0] == "SJo" or response[0] == "BJo") and response[1] == "2":
+            self.trump_suit = "wu zhu"
+            self.trump_suit_cnt = 2
+        
         
 
     # compare two cards
@@ -49,3 +57,4 @@ class Round(object):
     def play_round(self):
         Round.deal()
         
+print('asdf')
