@@ -51,8 +51,8 @@ class Round(object):
         if response[0] in Card.suit_map:
             new_trump_suit = response[0]
             new_trump_suit_cnt = int(response[1])
-        if new_trump_suit_cnt > trump_suit_cnt:
-            print("Set trump suit to: " + new_trump_suit)
+        if new_trump_suit_cnt > self.trump_suit_cnt:
+            print("Set trump suit to: " + self.new_trump_suit)
             self.trump_suit = new_trump_suit
             self.trump_suit_cnt = new_trump_suit_cnt
         
@@ -65,5 +65,9 @@ class Round(object):
 
     def play_round(self):
         Round.deal()
+
+    def turn_helper(self, start):
+        hand_size=len(self.players[0].gethand())
+
         
 print('asdf')
