@@ -4,10 +4,10 @@ player's hand
 '''
 import operator
 class player():
-    def __init__(self, name, trump_suit = 'Spade', trump_card, zhuangjia = False, attacker = False):
+    def __init__(self, name, trump_suit = 'Spade', trump_card, zhuangjia = False, attacker = False, hand = []):
         self.name = name
         self.zhaung_jia = zhuangjia
-        self.hand = []
+        self.hand = hand
         self.trump_suit = trump_suit
         self.trump_card = trump_card
         self.attacker = attacker
@@ -15,7 +15,16 @@ class player():
     def __str__(self):
         return self.name, self.zhuangjia, self.hand
 
-    def print_hand(self):
+    def get_name(self):
+        return self.name
+
+    def get_zhuang_jia(self):
+        return self.zhaung_jia
+
+    def get_trump_suit(self):
+        return self.trump_suit
+
+    def get_hand(self):
         return self.hand
 
     def get_hand_size(self):
