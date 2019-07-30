@@ -4,10 +4,12 @@ player's hand
 '''
 import operator
 class player():
-    def __init__(self, name, zhuangjia = False, attacker = False):
+    def __init__(self, name, trump_suit = 'Spade', trump_card, zhuangjia = False, attacker = False):
         self.name = name
         self.zhaung_jia = zhuangjia
         self.hand = []
+        self.trump_suit = trump_suit
+        self.trump_card = trump_card
         self.attacker = attacker
 
     def __str__(self):
@@ -16,17 +18,25 @@ class player():
     def print_hand(self):
         return self.hand
 
-    def hand_size(self):
+    def get_hand_size(self):
         return len(hand)
 
     def draw(self, card):
         #draws a card and checks to see if the player wants to declare trump suit
         for i in range(len(self.hand)):
-            if card.suit()
+            if compare(card, self.hand[i], self.trump_suit, self.trump_card) >= 0:
+                self.hand.insert(i,card)
+                break
+        self.hand.append(card)
 
-
-    def sort(self, trump_card, trump_suit = 'Spade'):
-        self.hand = sorted(self.hand)
+    def sort(self, trump_card, trump_suit):
+        new_hand = []
+        for card in self.hand:
+            for i in range(len(new_hand)):
+                if compare(card, new_hand[i], self.trump_suit, self.trump_card) >= 0:
+                    new_hand.insert(i, card)
+                    break
+        self.hand = new_hand[:]
 
     def compare(self, card1, card2, trump_suit, trump_card):
         if card1 == card2:
@@ -59,7 +69,11 @@ class player():
         elif suit_dict[card1.suit] < suit_dict[card2.suit]:
             return -1
         else:
-            if rank_dict[card1.rank] < rank_dict[card2]
+            if rank_dict[card1.rank] > rank_dict[card2.rank]:
+                return 1
+            else:
+                return -1
+
 
 
 
