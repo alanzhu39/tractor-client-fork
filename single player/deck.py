@@ -1,3 +1,8 @@
+'''
+structure for cards
+structure for deck
+note: trumps ignored
+'''
 class Card(object):
     '''
     rank = string
@@ -71,5 +76,5 @@ class Deck(object):
         for s in self.cards:
             print(s)
         
-deck = Deck()
-deck.printCardNames()
+# deck = Deck()
+# deck.printCardNames()
