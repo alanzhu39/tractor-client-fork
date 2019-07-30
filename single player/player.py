@@ -4,9 +4,9 @@ player's hand
 '''
 import operator
 class player():
-    def __init__(self, name, trump_suit = 'Spade', trump_card, zhuangjia = False, attacker = False, hand = []):
+    def __init__(self, name, trump_suit = 'spades', trump_card, zhuang_jia = False, attacker = False, hand = []):
         self.name = name
-        self.zhaung_jia = zhuangjia
+        self.zhuang_jia = zhuang_jia
         self.hand = hand
         self.trump_suit = trump_suit
         self.trump_card = trump_card
@@ -18,17 +18,45 @@ class player():
     def get_name(self):
         return self.name
 
-    def get_zhuang_jia(self):
-        return self.zhaung_jia
-
     def get_trump_suit(self):
         return self.trump_suit
+
+    def get_trump_card(self):
+        return self.trump_card
+
+    def get_zhuang_jia(self):
+        return self.zhaung_jia
 
     def get_hand(self):
         return self.hand
 
+    def get_attacker(self):
+        return self.attacker
+
+    def set_name(self, name):
+        self.name = name
+
+    def set_trump_suit(self, trump_suit):
+        self.trump_suit = trump_suit
+
+    def set_trump_card(self, trump_card):
+        self.trump_card = trump_card
+
+    def set_zhaung_jia(self, zhuang_jia):
+        self.zhuang_jia = zhaung_jia
+
+    def set_hand(self, hand):
+        self.hand = hand
+
+    def set_attacker(self, attacker):
+        self.attacker = attacker
+
     def get_hand_size(self):
         return len(hand)
+
+    def print_hand(self):
+        for card in self.hand:
+            print (card)
 
     def draw(self, card):
         #draws a card and checks to see if the player wants to declare trump suit
@@ -37,6 +65,13 @@ class player():
                 self.hand.insert(i,card)
                 break
         self.hand.append(card)
+
+    def play(self, card):
+        if card in self.hand:
+            self.hand.remove(card)
+            return card
+        else:
+            return "Card not in hand"
 
     def sort(self, trump_card, trump_suit):
         new_hand = []
