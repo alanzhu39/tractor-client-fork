@@ -3,6 +3,7 @@ structure for cards
 structure for deck
 note: trumps ignored
 '''
+import random
 class Card(object):
     '''
     rank = string
@@ -13,9 +14,11 @@ class Card(object):
     '''
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
     suits = ['\u2663', '\u2666', '\u2665', '\u2660']
-    def __init__(self, rank, suit, is_big_joker = False, is_small_joker = False):
+    suit_map = {'clubs':'\u2663', 'diamonds':'u2666', 'hearts':'u2665', 'spades':'u2660'}
+    def __init__(self, rank, suit, ID, is_big_joker = False, is_small_joker = False):
         self.rank = rank
         self.suit = suit
+        self.ID = ID
         self.is_big_joker = is_big_joker
         self.is_small_joker = is_small_joker
         self.is_joker = is_big_joker or is_small_joker
@@ -39,7 +42,7 @@ class Card(object):
             return True
         return False
     '''
-    Perhaps not necessary? Find a check in while playing
+    NOT NECESSARY, implement in the TURN helper
     def __lt__(self, other):
         # check equality 
         if self == other:
@@ -59,22 +62,33 @@ class Card(object):
         
 class Deck(object):
     def __init__(self):
-        self.ids = []
         self.cards = []
-        for i in range(108):
-            self.ids.append(i)
+        i = 0
         for r in Card.ranks:
             for s in Card.suits:
-                self.cards.append(Card(r, s))
-                self.cards.append(Card(r, s))
-        self.cards.append(Card('', '', False, True))
-        self.cards.append(Card('', '', False, True))
-        self.cards.append(Card('', '', True, False))
-        self.cards.append(Card('', '', True, False))
+                self.cards.append(Card(r, s, i))
+                i += 1
+                self.cards.append(Card(r, s, i))
+                i += 1
+        self.cards.append(Card('', '', i, False, True))
+        i += 1
+        self.cards.append(Card('', '', i, False, True))
+        i += 1
+        self.cards.append(Card('', '', i, True, False))
+        i += 1
+        self.cards.append(Card('', '', i, True, False))
+        i += 1
+        assert(i == 108)
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+    def pop(self):
+        return self.cards.pop()
         
-    def printCardNames(self):
+    def print_deck(self):
         for s in self.cards:
             print(s)
         
 # deck = Deck()
-# deck.printCardNames()
+# deck.printDeck()

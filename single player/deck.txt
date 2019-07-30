@@ -1,3 +1,0 @@
-Things to Complete for deck.py
-
-Card Class
