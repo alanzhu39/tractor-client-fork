@@ -13,7 +13,7 @@ class Card(object):
     is_small_joker = boolean
     '''
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-    suits = ['\u2663', '\u2666', '\u2665', '\u2660']
+    suits = ['clubs', 'diamonds', 'hearts', 'spades']
     suit_map = {'clubs':'\u2663', 'diamonds':'u2666', 'hearts':'u2665', 'spades':'u2660'}
     def __init__(self, rank, suit, ID, is_big_joker = False, is_small_joker = False):
         self.rank = rank
@@ -31,7 +31,7 @@ class Card(object):
             return 'BJo'
         if self.is_small_joker:
             return 'SJo'
-        return self.rank + self.suit
+        return self.rank + Card.suit_map[self.suit]
     
     def __eq__(self, other):
         if self.is_big_joker and other.is_big_joker:
