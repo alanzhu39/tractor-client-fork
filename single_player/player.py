@@ -118,5 +118,20 @@ class Player():
             else:
                 return -1
 
-# p = Player("Test")
-# print(p)
+    #COUNTS THE NUMBER OF CARDS A USER HAS OF A CERTAIN KIND (determined by string input)
+    def hand_contains(self, card_string):
+        this_card_counter = 0
+        if card_string == 'BJo' or card_string == 'SJo':
+            for card in self.hand:
+                if str(card)== card_string:
+                    this_card_counter += 1
+        else:
+            this_card_suit = card_string[-1]
+            this_card_rank = card_string[0:len(card_string)-1]
+            for card in self.hand:
+                if card.suit == this_card_suit[0] and card.rank == this_card_rank:
+                    this_card_counter += 1
+        return this_card_counter
+
+
+

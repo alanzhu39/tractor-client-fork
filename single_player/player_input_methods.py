@@ -1,6 +1,7 @@
-def get_current_player_input(self):
+from single_player.player import Player
+
+def get_current_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
-    print("Type the hand you want to play")
     response = input().split()
     return response
 
@@ -34,5 +35,36 @@ def is_valid_input(response):
             return False
     return True
 
-def get_valid_input(player, startplayer, currentsuit)
+#CHECK IF A MOVE IS LEGAL FOR FIRST MOVE PLAYER
+'''
+Check if player's hand contains at least the same number of cards in their own hand as they request to play
+Check if all trumps first, then check same suit
+'''
+def is_valid_play_firstplayer(player, response):
+    for each_input in response:
+        if player.hand_contains(each_input) < response.count(each_input):
+            return False
+
+#CHECK IF A MOVE IS LEGAL FOR SECOND, THIRD, AND FOURTH PLAYER
+'''
+Check if player's hand contains at least the same number of card in their own hand as they request to play
+'''
+
+#RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
+def get_valid_input(player, startplayer, currentsuit, handtype):
+    name = player.get_name()
+    #IF PERSON IS FIRST TO ACT
+    if startplayer.get_name()==name:
+        inputvalid = False
+        while not inputvalid:
+            print(name + ": Please type what you want to play (format:'BJo','SJo','10c','7s','Qd',etc)")
+            response = get_current_player_input()
+            if not is_valid_input(response):
+                continue
+
+
+    #IF PERSON IS NOT FIRST TO ACT
+    if startplayer.get_name()!=name:
+
+
 
