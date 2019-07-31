@@ -39,6 +39,7 @@ def is_valid_input(response):
 '''
 Check if player's hand contains at least the same number of cards in their own hand as they request to play
 Check if all trumps first, then check same suit
+Check if is pair or is single
 '''
 def is_valid_play_firstplayer(player, response):
     for each_input in response:
@@ -48,7 +49,11 @@ def is_valid_play_firstplayer(player, response):
 #CHECK IF A MOVE IS LEGAL FOR SECOND, THIRD, AND FOURTH PLAYER
 '''
 Check if player's hand contains at least the same number of card in their own hand as they request to play
+Check if hand style must be of trump -> if hand style is of a certain suit
+Make sure player's request contains minimum(# of trumps/certain suit, cards played)
+If handtype is tractor/pair, look through hand to see if contains tractor/pair of same hand style
 '''
+def is_valid_play_nextplayer(player, response):
 
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, currentsuit, handtype):
