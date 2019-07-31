@@ -94,4 +94,4 @@ class Deck(object):
             print(s)
         
 # deck = Deck()
-# deck.printDeck()
+# deck.print_deck()

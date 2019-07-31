@@ -12,7 +12,7 @@ class Player():
         self.attacker = attacker
 
     def __str__(self):
-        return self.name, self.zhuangjia, self.hand
+        return self.name + " " + str(self.zhuang_jia) + " " + str(self.hand)
 
     def get_name(self):
         return self.name
@@ -20,8 +20,8 @@ class Player():
     def get_trump_suit(self):
         return self.trump_suit
 
-    def get_trump_card(self):
-        return self.trump_card
+    def get_trump_suit(self):
+        return self.trump_suit
 
     def get_zhuang_jia(self):
         return self.zhuang_jia
@@ -118,7 +118,5 @@ class Player():
             else:
                 return -1
 
-
-
-
-
+# p = Player("Test")
+# print(p)
