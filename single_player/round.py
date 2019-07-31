@@ -116,6 +116,7 @@ class Round(object):
 
     def play_round(self):
         self.deal()
+        # todo implement trump ranking (depends on trump rank and trump suit)
         while len(self.players[0].get_hand()) > 0:
             self.play_turn()
 
