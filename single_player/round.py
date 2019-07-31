@@ -70,8 +70,16 @@ class Round(object):
     def play_round(self):
         self.deal()
 
+    def get_current_player_input(self):
+        #format is card rank+card suit (lowercase) or BJo all separated by spaces if multiple
+        print("Type the hand you want to play")
+        response = input().split()
+        return response
+
+    def 
+
     def turn_helper(self, start):
         hand_size=len(self.players[0].gethand())
 
-        
+
 print('asdf')
