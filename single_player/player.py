@@ -7,7 +7,7 @@ class Player():
     def __init__(self, name, trump_suit = 'spades', zhuang_jia = False, attacker = False, hand = []):
         self.name = name
         self.zhuang_jia = zhuang_jia
-        self.hand = hand
+        self.hand = hand[:]
         self.trump_suit = trump_suit
         self.attacker = attacker
 
@@ -20,8 +20,8 @@ class Player():
     def get_trump_suit(self):
         return self.trump_suit
 
-    def get_trump_suit(self):
-        return self.trump_suit
+    def get_trump_rank(self):
+        return self.trump_rank
 
     def get_zhuang_jia(self):
         return self.zhuang_jia
@@ -38,8 +38,8 @@ class Player():
     def set_trump_suit(self, trump_suit):
         self.trump_suit = trump_suit
 
-    def set_trump_card(self, trump_card):
-        self.trump_card = trump_card
+    def set_trump_rank(self, trump_rank):
+        self.trump_rank = trump_rank
 
     def set_zhuang_jia(self, zhuang_jia):
         self.zhuang_jia = zhuang_jia
@@ -51,7 +51,7 @@ class Player():
         self.attacker = attacker
 
     def get_hand_size(self):
-        return len(hand)
+        return len(self.hand)
 
     def print_hand(self):
         for card in self.hand:
@@ -60,11 +60,14 @@ class Player():
 
     def draw(self, card):
         #draws a card and checks to see if the player wants to declare trump suit
+        inserted = False
         for i in range(len(self.hand)):
-            if compare(card, self.hand[i], self.trump_suit, self.trump_card) >= 0:
+            if self.cmp(card, self.hand[i], self.trump_suit, self.trump_rank) >= 0:
                 self.hand.insert(i,card)
+                inserted = True
                 break
-        self.hand.append(card)
+        if not inserted:
+            self.hand.append(card)
 
     def play(self, card):
         if card in self.hand:
@@ -73,16 +76,16 @@ class Player():
         else:
             return "Card not in hand"
 
-    def sort(self, trump_card, trump_suit):
+    def sort(self, trump_rank, trump_suit):
         new_hand = []
         for card in self.hand:
             for i in range(len(new_hand)):
-                if compare(card, new_hand[i], self.trump_suit, self.trump_card) >= 0:
+                if self.cmp(card, new_hand[i], self.trump_suit, self.trump_rank) >= 0:
                     new_hand.insert(i, card)
                     break
         self.hand = new_hand[:]
 
-    def compare(self, card1, card2, trump_suit, trump_card):
+    def cmp(self, card1, card2, trump_suit, trump_rank):
         if card1 == card2:
             return 0
         if card1.is_big_joker:
@@ -93,21 +96,21 @@ class Player():
             return 1
         if card2.is_small_joker:
             return -1
-        if card1.rank == trump_card and card1.suit == trump_suit:
+        if card1.rank == trump_rank and card1.suit == trump_suit:
             return 1
-        if card2.rank == trump_card and card2.suit == trump_suit:
+        if card2.rank == trump_rank and card2.suit == trump_suit:
             return -1
-        if card1.rank == trump_card and card2.rank == trump_card:
+        if card1.rank == trump_rank and card2.rank == trump_rank:
             return 0
-        if card1.rank == trump_card:
+        if card1.rank == trump_rank:
             return 1
-        if card2.rank == trump_card:
+        if card2.rank == trump_rank:
             return -1
 
         suit_dict = {'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4}
         suit_dict[trump_suit] = 5
         rank_dict = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'J':11, 'Q':12, 'K':13, 'A':14}
-        rank_dict[trump_card] = 15
+        rank_dict[trump_rank] = 15
         if suit_dict[card1.suit] > suit_dict[card2.suit]:
             return 1
         elif suit_dict[card1.suit] < suit_dict[card2.suit]:
@@ -119,19 +122,12 @@ class Player():
                 return -1
 
     #COUNTS THE NUMBER OF CARDS A USER HAS OF A CERTAIN KIND (determined by string input)
-    def hand_contains(self, card_string):
-        this_card_counter = 0
-        if card_string == 'BJo' or card_string == 'SJo':
-            for card in self.hand:
-                if str(card)== card_string:
-                    this_card_counter += 1
-        else:
-            this_card_suit = card_string[-1]
-            this_card_rank = card_string[0:len(card_string)-1]
-            for card in self.hand:
-                if card.suit == this_card_suit[0] and card.rank == this_card_rank:
-                    this_card_counter += 1
-        return this_card_counter
+    def card_count(self, card):
+        res = 0
+        for c in self.hand:
+            if c == card:
+                res += 1
+        return res
 
 
 
