@@ -1,30 +1,31 @@
-'''
+"""
 structure for cards
 structure for deck
 note: trumps ignored
-'''
+"""
 import random
+
+
 class Card(object):
-    '''
+    """
     rank = string
     suit = string
     is_trump = boolean
     is_big_joker = boolean
     is_small_joker = boolean
-    '''
+    """
+
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
     suits = ['clubs', 'diamonds', 'hearts', 'spades']
     suit_map = {'clubs':'\u2663', 'diamonds':'\u2666', 'hearts':'\u2665', 'spades':'\u2660'}
-    def __init__(self, rank, suit, ID, is_big_joker = False, is_small_joker = False):
+
+    def __init__(self, rank, suit, ID = 0, is_big_joker = False, is_small_joker = False):
         self.rank = rank
         self.suit = suit
         self.ID = ID
         self.is_big_joker = is_big_joker
         self.is_small_joker = is_small_joker
         self.is_joker = is_big_joker or is_small_joker
-        # implement below when trump suit decided
-        #self.is_trump = is_trump
-        #assert not(not self.is_trump and self.is_joker)
 
     def __str__(self):
         if self.is_big_joker:
@@ -41,25 +42,18 @@ class Card(object):
         if self.rank == other.rank and self.suit == other.suit:
             return True
         return False
-    '''
-    NOT NECESSARY, implement in the TURN helper
-    def __lt__(self, other):
-        # check equality 
-        if self == other:
-            return False
-        # check joker cases
-        if self.is_big_joker:
-            return False
-        if self.is_small_joker:
-            return other.is_big_joker
-        if other.is_joker:
-            return True
-        # check trump
-        if self.is_trump:
-            return other.is_trump and self.rank
-        # check current suit???
-    '''    
-        
+
+
+class Pair(object):
+    def __init__(self, card):
+        self.card = card
+
+
+class Tractor(object):
+    def __init__(self, cards):
+        self.cards = cards[:]
+
+
 class Deck(object):
     def __init__(self):
         self.cards = []
@@ -92,6 +86,9 @@ class Deck(object):
     def print_deck(self):
         for s in self.cards:
             print(s)
-        
+
+
+SMALL_JOKER = Card('', '', 0, False, True)
+BIG_JOKER = Card('', '', 0, True, False)
 # deck = Deck()
 # deck.print_deck()

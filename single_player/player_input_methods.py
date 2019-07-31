@@ -54,7 +54,7 @@ Make sure player's request contains minimum(# of trumps/certain suit, cards play
 If handtype is tractor/pair, look through hand to see if contains tractor/pair of same hand style
 '''
 def is_valid_play_nextplayer(player, response):
-
+    1
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, currentsuit, handtype):
     name = player.get_name()
@@ -70,6 +70,6 @@ def get_valid_input(player, startplayer, currentsuit, handtype):
 
     #IF PERSON IS NOT FIRST TO ACT
     if startplayer.get_name()!=name:
-
+        1
 
 
