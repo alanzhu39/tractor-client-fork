@@ -6,34 +6,18 @@ def get_current_player_input():
     return response
 
 
-def is_valid_card(card_string):
-    if len(card_string) == 3:
-        if card_string == 'BJo' or card_string == 'SJo':
-            return True
-        suit=card_string[2]
-        if (suit=='c' or suit=='d' or suit=='h' or suit=='s') and card_string[:2]=='10':
-            return True
-    if len(card_string)==2:
-        suit=card_string[1]
-        if (suit=='c' or suit=='d' or suit=='h' or suit=='s') and card_string[0].isDigit():
-            return True
-
-
 def is_pair(response):
     if len(response) == 2 and response[0] == response[1]:
         return True
 
 
-def is_single(response):
-    if len(response) == 1:
-        return True
-
-
-def is_valid_input(response):
-    for each_card in response:
-        if not is_valid_card(each_card):
+def is_valid_input(player, response):
+    for each_index in response:
+        if int(each_index) < 0 or int(each_index) > len(player.get_hand()):
             return False
-    return True
+        if len(set(response)) != len(response):
+            return False
+        return True
 
 #CHECK IF A MOVE IS LEGAL FOR FIRST MOVE PLAYER
 '''
