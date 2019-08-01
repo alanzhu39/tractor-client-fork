@@ -3,8 +3,8 @@ add players
 start the rounds
 keep track of scores
 """
-from single_player.player import *
-from single_player.round import *
+from player import *
+from round import *
 
 # below is a test
 players = [Player("Adam", "2"), Player("Andrew", "2"), Player("Alan", "2"), Player("Raymond", "2")]

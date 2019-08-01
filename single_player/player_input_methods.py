@@ -1,4 +1,4 @@
-from single_player.player import Player
+from player import Player
 
 def get_current_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple

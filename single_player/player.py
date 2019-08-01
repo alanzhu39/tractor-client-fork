@@ -3,6 +3,7 @@ Keep track of:
 player's hand
 """
 
+from deck import *
 
 class Player(object):
     """
@@ -59,7 +60,7 @@ class Player(object):
 
     def print_hand(self):
         for card in self.hand:
-            print(card, end=' ')
+            print(card, ' ')
         print('')
 
     def draw(self, card):
