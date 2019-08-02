@@ -1,4 +1,5 @@
 from single_player.player import Player
+from single_player.deck import Card
 
 def get_current_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
@@ -6,8 +7,8 @@ def get_current_player_input():
     return response
 
 
-def is_pair(response):
-    if len(response) == 2 and response[0] == response[1]:
+def is_pair(card1, card2):
+    if card1 == card2:
         return True
 
 
@@ -18,6 +19,16 @@ def is_valid_input(player, response):
         if len(set(response)) != len(response):
             return False
         return True
+
+
+def is_trump(card, trumpinfo):
+    if card.is_joker:
+        return True
+    if card.suit == trumpinfo["suit"]:
+        return True
+    if card.rank == trumpinfo["rank"]:
+        return True
+    return False
 
 #CHECK IF A MOVE IS LEGAL FOR FIRST MOVE PLAYER
 '''
@@ -40,16 +51,32 @@ If handtype is tractor/pair, look through hand to see if contains tractor/pair o
 def is_valid_play_nextplayer(player, response):
     1
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
-def get_valid_input(player, startplayer, currentsuit, handtype):
+def get_valid_input(player, startplayer, trumpinfo, curHandInfo):
     name = player.get_name()
     #IF PERSON IS FIRST TO ACT
-    if startplayer.get_name()==name:
-        inputvalid = False
-        while not inputvalid:
+    hand = player.get_hand()
+    if startplayer.get_name() == name:
+        while True:
             print(name + ": Please type what you want to play (format:'BJo','SJo','10c','7s','Qd',etc)")
             response = get_current_player_input()
             if not is_valid_input(response):
                 continue
+            break
+        if len(response) == 2:
+            card1 = hand[int(response[0])]
+            card2 = hand[int(response[1])]
+            if is_pair(card1, card2):
+                if is_trump(card1):
+                    return True, [card1, card2], 'trump', 'pair'
+                else:
+                    return True, [card1, card2], card1.suit, 'pair'
+        elif len(response) == 1:
+            card1 = hand[int(response[0])]
+            if is_trump(card1):
+                return True, [card1], 'trump', 'pair'
+            else:
+                return True, [card1], card1.suit, 'pair'
+
 
 
     #IF PERSON IS NOT FIRST TO ACT
