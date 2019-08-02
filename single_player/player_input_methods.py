@@ -51,7 +51,7 @@ If handtype is tractor/pair, look through hand to see if contains tractor/pair o
 def is_valid_play_nextplayer(player, response):
     1
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
-def get_valid_input(player, startplayer, trumpinfo, curHandInfo):
+def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):
     name = player.get_name()
     #IF PERSON IS FIRST TO ACT
     hand = player.get_hand()
@@ -66,21 +66,28 @@ def get_valid_input(player, startplayer, trumpinfo, curHandInfo):
             card1 = hand[int(response[0])]
             card2 = hand[int(response[1])]
             if is_pair(card1, card2):
-                if is_trump(card1):
+                if is_trump(card1, trumpinfo):
                     return True, [card1, card2], 'trump', 'pair'
                 else:
                     return True, [card1, card2], card1.suit, 'pair'
         elif len(response) == 1:
             card1 = hand[int(response[0])]
-            if is_trump(card1):
-                return True, [card1], 'trump', 'pair'
+            if is_trump(card1, trumpinfo):
+                return True, [card1], 'trump', 'single'
             else:
-                return True, [card1], card1.suit, 'pair'
+                return True, [card1], card1.suit, 'single'
 
 
 
     #IF PERSON IS NOT FIRST TO ACT
-    if startplayer.get_name()!=name:
-        1
-
+    if startplayer.get_name()!= name:
+        while True:
+            print(name+": Please type the indeces of the cards you would like to play")
+            response = get_current_player_input()
+            if not is_valid_input(response):
+                continue
+            break
+        if curNumCards == 2:
+            if curType == 'pair' and len(response) ==2:
+                
 
