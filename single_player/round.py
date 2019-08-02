@@ -9,8 +9,8 @@ current attacker's points
 also play the round:
 dealing, compare cards, and playing
 """
-from single_player.deck import *
-import single_player.player_input_methods as pim
+from deck import *
+import player_input_methods as pim
 
 
 class Round(object):

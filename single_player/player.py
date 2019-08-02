@@ -3,6 +3,7 @@ Keep track of:
 player's hand
 """
 
+from deck import *
 
 class Player(object):
     """
@@ -59,11 +60,11 @@ class Player(object):
 
     def print_hand(self):
         for card in self.hand:
-            print(card, end=' ')
+            print(card, ' ')
         print('')
 
     def draw(self, card):
-        # draws a card and checks to see if the player wants to declare trump suit
+        # draws a card and inserts into hand
         inserted = False
         for i in range(len(self.hand)):
             if card_cmp(card, self.hand[i], self.trump_suit, self.trump_rank) >= 0:
