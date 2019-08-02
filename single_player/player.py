@@ -64,7 +64,7 @@ class Player(object):
         print('')
 
     def draw(self, card):
-        # draws a card and checks to see if the player wants to declare trump suit
+        # draws a card and inserts into hand
         inserted = False
         for i in range(len(self.hand)):
             if card_cmp(card, self.hand[i], self.trump_suit, self.trump_rank) >= 0:
