@@ -127,4 +127,3 @@ def card_cmp(card1, card2, trump_suit, trump_rank):
             return 1
         else:
             return -1
-

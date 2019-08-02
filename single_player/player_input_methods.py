@@ -50,6 +50,29 @@ If handtype is tractor/pair, look through hand to see if contains tractor/pair o
 '''
 def is_valid_play_nextplayer(player, response):
     1
+
+
+def hand_contains_pair_in_suit(hand, suit, trumpinfo):
+    for i in range(len(hand)-1):
+        if suit == 'trump':
+            if hand[i] == hand[i+1] and is_trump(hand[i], trumpinfo):
+                return True
+        else:
+            if hand[i] == hand[u+1] and hand[i].suit == suit:
+                return True
+    return False
+
+def num_cards_in_suit(hand, suit, trumpinfo):
+    cnt = 0
+    if suit == 'trump':
+        for i in range(len(hand)):
+            if is_trump(hand, trumpinfo):
+                cnt +=1
+    else:
+        for i in range(len(hand)):
+            if hand[i].suit == suit:
+                cnt+1
+    return cnt
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):
     name = player.get_name()
@@ -76,6 +99,8 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
                 return True, [card1], 'trump', 'single'
             else:
                 return True, [card1], card1.suit, 'single'
+        else:
+            return False, []
 
 
 
@@ -88,6 +113,40 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
                 continue
             break
         if curNumCards == 2:
-            if curType == 'pair' and len(response) ==2:
+            if curType == 'pair' and len(response) == 2:
+                card1 = hand[int(response[0])]
+                card2 = hand[int(response[1])]
+                responsehand = [card1, card2]
+                if num_cards_in_suit(hand, curSuit, trumpinfo) >= 2:
+                    if hand_contains_pair_in_suit(hand, curSuit, trumpinfo):
+                        if hand_contains_pair_in_suit(responsehand, curSuit, trumpinfo):
+                            return True, responsehand
+                        else:
+                            return False, []
+                    else:
+                        if num_cards_in_suit(responsehand, curSuit, trumpinfo) == 2:
+                            return True, responsehand
+                        else:
+                            return False, []
+                elif num_cards_in_suit(hand, curSuit, trumpinfo) == 1:
+                    if num_cards_in_suit(responsehand, curSuit, trumpinfo) == 1:
+                        return True, responsehand
+                    else:
+                        return False, []
+                elif num_cards_in_suit(hand, curSuit, trumpinfo) == 0:
+                    return True, responsehand
+
+        if curNumCards == 1:
+            if len(response) == 1:
+                card1 = hand[int(response[0])]
+                responsehand = [card1]
+                if num_cards_in_suit(hand, curSuit, trumpinfo) == 1:
+                    if num_cards_in_suit(responsehand, curSuit, trumpinfo) == 1:
+                        return True, responsehand
+                    else:
+                        return False, []
+                else:
+                    return True, responsehand
+
                 
 
