@@ -93,6 +93,8 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
                     return True, [card1, card2], 'trump', 'pair'
                 else:
                     return True, [card1, card2], card1.suit, 'pair'
+            else:
+                return False, []
         elif len(response) == 1:
             card1 = hand[int(response[0])]
             if is_trump(card1, trumpinfo):
@@ -147,6 +149,9 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
                         return False, []
                 else:
                     return True, responsehand
+
+        else:
+            return False, []
 
                 
 
