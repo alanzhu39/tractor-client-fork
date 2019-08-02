@@ -20,6 +20,8 @@ class Round(object):
     set_zhuang_jia = True if there is a zhuang jia at the start of the round (boolean)
     trump_suit = trump suit (string)
     trump_suit_cnt = number of cards used to liang the trump suit (exceptions: 0 if no liang and 3 if wu zhu)
+    trump_rank = rank of trump card
+    suit_played = suit of first card played (the suit that everyone must follow)
     """
     num_di_pai = 8
 
@@ -37,6 +39,8 @@ class Round(object):
 
         self.trump_suit = "none"
         self.trump_suit_cnt = 0
+        self.trump_rank = players[0].get_trump_rank
+        self.suit_played = "none"
 
     def deal(self):
         self.deck.shuffle()
@@ -103,16 +107,91 @@ class Round(object):
         
 
     def cmp_cards(a, b):
-        1
+        #Compares cards in game, with consideration to the first card played
+        #returns 1 if a>b, 0 if a=b, and -1 if a<b
+        if a == b:
+            return 0
+        if a.is_big_joker:
+            return 1
+        if b.is_big_joker:
+            return -1
+        if a.is_small_joker:
+            return 1
+        if b.is_small_joker:
+            return -1
+        if a.rank == self.trump_rank and a.suit == self.trump_suit:
+            return 1
+        if b.rank == self.trump_rank and b.suit == self.trump_suit:
+            return -1
+        if a.rank == self.trump_rank and b.rank == self.trump_rank:
+            return 0
+        if a.rank == self.trump_rank:
+            return 1
+        if b.rank == self.trump_rank:
+            return -1
+
+        suit_dict = {'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4, suit_played: 5, trump_suit: 6}
+        rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
+                     'K': 13, 'A': 14, trump_rank: 15}
+        if suit_dict[a.suit] > suit_dict[b.suit]:
+            return 1
+        elif suit_dict[a.suit] < suit_dict[b.suit]:
+            return -1
+        else:
+            if rank_dict[a.rank] > rank_dict[b.rank]:
+                return 1
+            else:
+                return -1
 
     def play_turn(self):
         1
 
     def flip_di_pai(self):
-        1
+        #Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
+        #Otherwise makes the largest card the trump rank
+        largest_rank_suit = "none"
+        largest_rank = 1
+        rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
+                     'K': 13, 'A': 14}
+        for card in self.deck:
+            print card
+            if card.is_big_joker or card.is_small_joker:
+                self.trump_suit == "none"
+                print ("The game is now WuZhu")
+                return
+            elif card.rank == self.trump_rank:
+                self.trump_suit == card.suit
+                print ("The trump suit is now %s" % card.suit)
+                return
+            else:
+                if rank_dict[card.rank] > largest_rank:
+                    largest_rank_suit = card.suit
+        self.trump_suit = largest_rank_suit
+        print ("The trump suit is now %s" % self.trump_suit)
+        return
 
     def choose_di_pai(self):
-        1
+        zhuangjia = self.players[self.zhuang_jia_id]
+        for card in self.deck:
+            zhuangjia.draw(card)
+        discards = []
+        while len(discards) < 8:
+            print ("Your discards so far are: "),
+            for card in discards: print (card)
+            print ("Enter the card that you want to discard. Or, enter \'undo\' to return "
+                               "a card from the discard to your hand")
+            card_input = pim.get_current_player_input()
+            if card_input.lower() == 'undo':
+                print ("Enter the card that you want to return to your hand")
+                # do this
+            elif pim.is_valid_card(card_input):
+                if card_input == "BJo":
+                    discard_card = Card('2', 's', is_big_joker = True)
+                elif card_input == "SJo":
+                    discard_card = Card('2', 's', is_small_joker = True)
+                else:
+                    discard_card = Card(card_input[0], card_input[1])
+
 
     def play_round(self):
         self.deal()
