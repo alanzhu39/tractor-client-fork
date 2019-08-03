@@ -30,35 +30,41 @@ def is_trump(card, trumpinfo):
         return True
     return False
 
-#CHECK IF A MOVE IS LEGAL FOR FIRST MOVE PLAYER
+
+# CHECK IF A MOVE IS LEGAL FOR FIRST MOVE PLAYER
 '''
 Check if player's hand contains at least the same number of cards in their own hand as they request to play
 Check if all trumps first, then check same suit
 Check if is pair or is single
 '''
+
+
 def is_valid_play_firstplayer(player, response):
     for each_input in response:
         if player.hand_contains(each_input) < response.count(each_input):
             return False
 
-#CHECK IF A MOVE IS LEGAL FOR SECOND, THIRD, AND FOURTH PLAYER
+
+# CHECK IF A MOVE IS LEGAL FOR SECOND, THIRD, AND FOURTH PLAYER
 '''
 Check if player's hand contains at least the same number of card in their own hand as they request to play
 Check if hand style must be of trump -> if hand style is of a certain suit
 Make sure player's request contains minimum(# of trumps/certain suit, cards played)
 If handtype is tractor/pair, look through hand to see if contains tractor/pair of same hand style
 '''
+
+
 def is_valid_play_nextplayer(player, response):
     1
 
 
 def hand_contains_pair_in_suit(hand, suit, trumpinfo):
-    for i in range(len(hand)-1):
+    for i in range(len(hand) - 1):
         if suit == 'trump':
-            if hand[i] == hand[i+1] and is_trump(hand[i], trumpinfo):
+            if hand[i] == hand[i + 1] and is_trump(hand[i], trumpinfo):
                 return True
         else:
-            if hand[i] == hand[u+1] and hand[i].suit == suit:
+            if hand[i] == hand[i + 1] and hand[i].suit == suit:
                 return True
     return False
 
@@ -72,14 +78,18 @@ def num_cards_in_suit(hand, suit, trumpinfo):
     else:
         for i in range(len(hand)):
             if hand[i].suit == suit:
-                cnt+1
+                cnt + 1
     return cnt
 
 
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, trumpinfo, curSuit = '', curType = '', curNumCards = 0):
+
+
+# RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
+def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):
     name = player.get_name()
-    #IF PERSON IS FIRST TO ACT
+    # IF PERSON IS FIRST TO ACT
     hand = player.get_hand()
     if player is startplayer:
         while True:
@@ -107,12 +117,10 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit = '', curType = '', 
         else:
             return False, []
 
-
-
-    #IF PERSON IS NOT FIRST TO ACT
-    if startplayer.get_name()!= name:
+    # IF PERSON IS NOT FIRST TO ACT
+    if startplayer.get_name() != name:
         while True:
-            print(name+": Please type the indeces of the cards you would like to play")
+            print(name + ": Please type the indeces of the cards you would like to play")
             response = get_current_player_input()
             if not is_valid_input(response):
                 continue
@@ -157,5 +165,5 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit = '', curType = '', 
         else:
             return False, []
 
-                
+
 

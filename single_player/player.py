@@ -91,8 +91,12 @@ class Player(object):
                 res += 1
         return res
 
+    def play(self, card):
+        self.hand.remove(card)
 
-# compares cards correctly if the two cards are not both non-trump (-1 means <, 0 means =, 1 means >)
+
+
+# comparitor for cards in the player's hand. This compares cards based on suit to order them in the player's hand.
 def card_cmp(card1, card2, trump_suit, trump_rank):
     if card1 == card2:
         return 0

@@ -20,9 +20,9 @@ class TractorClient(ConnectionListener):
         # initialize pygame clock
         self.clock=pygame.time.Clock()
         self.initGraphics()
-
+        
         self.Connect()
-
+        
     def drawBoard(self):
         # draws card on screen
         self.screen.blit(self.testCard, [0,0])
