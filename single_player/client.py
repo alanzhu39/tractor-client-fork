@@ -20,9 +20,22 @@ class TractorClient(ConnectionListener):
         # initialize pygame clock
         self.clock=pygame.time.Clock()
         self.initGraphics()
-
-        self.Connect()
-
+        
+        address = input("Address of server: ")
+        try:
+            if not address:
+                host, port="localhost", 8000
+            else:
+                host,port=address.split(":")
+            self.Connect((host, int(port)))
+        except:
+            print("Error Connecting to Server")
+            print("Usage:", "host:port")
+            print("e.g.", "localhost:31425")
+            exit()
+        print("Boxes client started")
+        
+        
     def drawBoard(self):
         # draws card on screen
         self.screen.blit(self.testCard, [0,0])

@@ -11,7 +11,7 @@ class TractorServer(Server):
     channelClass = ClientChannel()
  
     def Connected(self, channel, addr):
-        print('new connection:', channel)
+        print('asdfasdfasdf:', channel)
 
 print("STARTING SERVER ON LOCALHOST")
 tractorServe = TractorServer()

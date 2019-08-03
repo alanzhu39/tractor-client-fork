@@ -7,7 +7,7 @@ from PodSixNet.Channel import Channel
 class Server(asyncore.dispatcher):
     channelClass = Channel
     
-    def __init__(self, channelClass=None, localaddr=("127.0.0.1", 5071), listeners=5):
+    def __init__(self, channelClass=None, localaddr=("10.243.116.250", 5071), listeners=5):
         if channelClass:
             self.channelClass = channelClass
         self._map = {}

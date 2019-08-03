@@ -8,7 +8,7 @@ class EndPoint(Channel):
     """
     The endpoint queues up all network events for other classes to read.
     """
-    def __init__(self, address=("127.0.0.1", 31425), map=None):
+    def __init__(self, address=("10.243.116.250", 31425), map=None):
         self.address = address
         self.isConnected = False
         self.queue = []
