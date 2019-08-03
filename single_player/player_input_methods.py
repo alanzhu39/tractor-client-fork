@@ -118,7 +118,7 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
             return False, []
 
     # IF PERSON IS NOT FIRST TO ACT
-    if startplayer.get_name() != name:
+    elif player is not startplayer:
         while True:
             print(name + ": Please type the indeces of the cards you would like to play")
             response = get_current_player_input()
