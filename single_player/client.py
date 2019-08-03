@@ -6,7 +6,7 @@ class TractorClient(ConnectionListener):
 
     def initGraphics(self):
         # creates surface from uploaded card image
-        self.testCard = pygame.transform.scale(pygame.image.load("cards_jpeg/2C.jpg"),(66,101))
+        self.testCard = pygame.transform.scale(pygame.image.load("C:\\Users\\Alan Zhu\\Documents\\GitHub\\tractor-client\\single_player\\cards_jpeg\\2C.jpg"),(66,101))
         
     def __init__(self):
         
@@ -20,6 +20,7 @@ class TractorClient(ConnectionListener):
         # initialize pygame clock
         self.clock=pygame.time.Clock()
         self.initGraphics()
+
         self.Connect()
 
     def drawBoard(self):
@@ -27,11 +28,11 @@ class TractorClient(ConnectionListener):
         self.screen.blit(self.testCard, [0,0])
         
     def update(self):
-        connection.Pump()
-        self.Pump()
-        
         # make the game 60 fps
         self.clock.tick(60)
+
+        connection.Pump()
+        self.Pump()
 
         # clear the screen
         self.screen.fill(0)

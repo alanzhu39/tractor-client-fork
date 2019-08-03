@@ -14,7 +14,7 @@ from PodSixNet.EndPoint import EndPoint
 
 connection = EndPoint()
 
-class ConnectionListener:
+class ConnectionListener():
     """
     Looks at incoming data and calls "Network_" methods in self, based on what messages come in.
     Subclass this to have your own classes monitor incoming network messages.
