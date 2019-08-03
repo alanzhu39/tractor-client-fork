@@ -10,7 +10,7 @@ also play the round:
 dealing, compare cards, and playing
 """
 from deck import *
-import player_input_methods as pim
+import single_player.player_input_methods as pim
 
 
 class Round(object):
@@ -143,8 +143,6 @@ class Round(object):
             else:
                 return -1
 
-    def play_turn(self):
-        1
 
     def flip_di_pai(self):
         #Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
@@ -192,13 +190,36 @@ class Round(object):
                 else:
                     discard_card = Card(card_input[0], card_input[1])
 
+    def get_trump_info(self):
+        trumpinfo = {
+            'suit': str(self.trump_suit),
+            'rank': str(self.trump_rank)
+        }
+        return trumpinfo
+
 
     def play_round(self):
         self.deal()
         # todo implement trump ranking (depends on trump rank and trump suit)
+
+        #pass in trump info as a dictionary, i'll need it
         while len(self.players[0].get_hand()) > 0:
-            self.play_turn()
+            self.play_turn(self.zhuang_jia__id, get_trump_info())
 
-    def turn_helper(self, start):
-        hand_size=len(self.players[0].gethand())
 
+    def play_turn(self, startplayerindex, trumpinfo):
+        # first player moves
+        data1 = get_input_from_player_index(startplayerindex, startplayerindex, trumpinfo)
+        #DATA IS IN FORM TRUE, CARD LIST, CURRENT SUIT PLAYED, CURRENT TYPE(PAIR, ETC) IN LIST FORMAT
+        cursuit = data1[2]
+        curtype = data1[3]
+        curnumcards = len(data1[1])
+        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
+        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
+        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
+
+    def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
+        mydata = pim.get_valid_input(players[index], players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
+        while not mydata[0]:
+            mydata = pim.get_valid_input(players[index], players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
+        return mydata

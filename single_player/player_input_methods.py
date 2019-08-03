@@ -62,25 +62,28 @@ def hand_contains_pair_in_suit(hand, suit, trumpinfo):
                 return True
     return False
 
+
 def num_cards_in_suit(hand, suit, trumpinfo):
     cnt = 0
     if suit == 'trump':
         for i in range(len(hand)):
             if is_trump(hand, trumpinfo):
-                cnt +=1
+                cnt += 1
     else:
         for i in range(len(hand)):
             if hand[i].suit == suit:
                 cnt+1
     return cnt
+
+
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
-def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):
+def get_valid_input(player, startplayer, trumpinfo, curSuit = '', curType = '', curNumCards = 0):
     name = player.get_name()
     #IF PERSON IS FIRST TO ACT
     hand = player.get_hand()
-    if startplayer.get_name() == name:
+    if player is startplayer:
         while True:
-            print(name + ": Please type what you want to play (format:'BJo','SJo','10c','7s','Qd',etc)")
+            print(name + ": Please type the indeces of the cards you want to play")
             response = get_current_player_input()
             if not is_valid_input(response):
                 continue
@@ -137,7 +140,8 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
                         return False, []
                 elif num_cards_in_suit(hand, curSuit, trumpinfo) == 0:
                     return True, responsehand
-
+            else:
+                return False, []
         if curNumCards == 1:
             if len(response) == 1:
                 card1 = hand[int(response[0])]
