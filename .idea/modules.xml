@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/tractor.iml" filepath="$PROJECT_DIR$/.idea/tractor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../tractor/.idea/tractor-client.iml" filepath="$PROJECT_DIR$/../tractor/.idea/tractor-client.iml" />
     </modules>
   </component>
 </project>
