@@ -106,9 +106,9 @@ class Round(object):
             print("You don't have the cards necessary for that liang")
         
 
-    def cmp_cards(a, b):
-        #Compares cards in game, with consideration to the first card played
-        #returns 1 if a>b, 0 if a=b, and -1 if a<b
+    def cmp_cards(self, a, b):
+        # Compares cards in game, with consideration to the first card played
+        # returns 1 if a>b, 0 if a=b, and -1 if a<b
         if a == b:
             return 0
         if a.is_big_joker:
@@ -130,9 +130,9 @@ class Round(object):
         if b.rank == self.trump_rank:
             return -1
 
-        suit_dict = {'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4, suit_played: 5, trump_suit: 6}
+        suit_dict = {'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4, self.suit_played: 5, self.trump_suit: 6}
         rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
-                     'K': 13, 'A': 14, trump_rank: 15}
+                     'K': 13, 'A': 14, self.trump_rank: 15}
         if suit_dict[a.suit] > suit_dict[b.suit]:
             return 1
         elif suit_dict[a.suit] < suit_dict[b.suit]:
@@ -153,7 +153,7 @@ class Round(object):
         largest_rank = 1
         rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
                      'K': 13, 'A': 14}
-        for card in self.deck:
+        for card in self.deck.cards:
             print card
             if card.is_big_joker or card.is_small_joker:
                 self.trump_suit == "none"
@@ -172,7 +172,7 @@ class Round(object):
 
     def choose_di_pai(self):
         zhuangjia = self.players[self.zhuang_jia_id]
-        for card in self.deck:
+        for card in self.deck.cards:
             zhuangjia.draw(card)
         discards = []
         while len(discards) < 8:
@@ -183,14 +183,26 @@ class Round(object):
             card_input = pim.get_current_player_input()
             if card_input.lower() == 'undo':
                 print ("Enter the card that you want to return to your hand")
-                # do this
-            elif pim.is_valid_card(card_input):
                 if card_input == "BJo":
                     discard_card = Card('2', 's', is_big_joker = True)
                 elif card_input == "SJo":
                     discard_card = Card('2', 's', is_small_joker = True)
                 else:
-                    discard_card = Card(card_input[0], card_input[1])
+                    discard_card = Card(card_input[:-1], card_input[-1])
+                discards.remove(discard_card)
+            elif pim.is_card(card_input):
+                if card_input == "BJo":
+                    discard_card = Card('2', 's', is_big_joker = True)
+                elif card_input == "SJo":
+                    discard_card = Card('2', 's', is_small_joker = True)
+                else:
+                    discard_card = Card(card_input[:-1], card_input[-1])
+                discards.append(discard_card)
+            else:
+                print ("Not a valid input. Please enter a valid input")
+        for card in discards:
+            zhuangjia.play(card)
+
 
 
     def play_round(self):
