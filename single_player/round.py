@@ -23,6 +23,7 @@ class Round(object):
     trump_rank = rank of trump card
     suit_played = suit of first card played (the suit that everyone must follow)
     discards = list of discarded cards by zhuang jia
+    attacker_points = # points attackers collected
     """
     num_di_pai = 8
 
@@ -43,6 +44,22 @@ class Round(object):
         self.trump_rank = players[0].get_trump_rank
         self.suit_played = "none"
         self.discards = []
+        self.attacker_points = 0
+
+    # returns number of points attackers earned
+    def play_round(self):
+        self.deal()
+        # todo implement trump ranking (depends on trump rank and trump suit)
+        # play out the turns
+        # pass in trump info as a dictionary
+        self.play_turn(self.zhuang_jia_id, self.get_trump_info())
+        while len(self.players[0].get_hand()) > 0:
+            # todo need id of player starting next turn
+            1
+        # reveal di pai and add to attacker's points if necessary
+        # attacker_multiplier = 2*(number of cards played in last turn)*(did attackers win last turn?)
+        # attacker_points += attacker_multiplier*(number of points in di pai)
+        return self.attacker_points
 
     def deal(self):
         self.deck.shuffle()
@@ -206,16 +223,6 @@ class Round(object):
             'rank': str(self.trump_rank)
         }
         return trumpinfo
-
-    def play_round(self):
-        self.deal()
-        # todo implement trump ranking (depends on trump rank and trump suit)
-
-        # pass in trump info as a dictionary
-        self.play_turn(self.zhuang_jia_id, self.get_trump_info())
-        while len(self.players[0].get_hand()) > 0:
-            # todo need id of player starting next turn
-            1
 
     def play_turn(self, startplayerindex, trumpinfo):
         # first player moves
