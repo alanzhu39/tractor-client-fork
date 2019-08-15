@@ -213,7 +213,7 @@ class Round(object):
 
         # pass in trump info as a dictionary, i'll need it
         while len(self.players[0].get_hand()) > 0:
-            self.play_turn(self.zhuang_jia__id, get_trump_info())
+            self.play_turn(self.zhuang_jia_id, self.get_trump_info())
 
     def play_turn(self, startplayerindex, trumpinfo):
         # first player moves
