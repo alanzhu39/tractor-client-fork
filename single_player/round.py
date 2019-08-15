@@ -222,18 +222,29 @@ class Round(object):
         cursuit = data1[2]
         curtype = data1[3]
         curnumcards = len(data1[1])
+<<<<<<< HEAD
         # DATA IS IN FORM TRUE, CARD LIST
-        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindx, trumpinfo, cursuit, curtype,
+        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype,
                                             curnumcards)
-        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindx, trumpinfo, cursuit, curtype,
+        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype,
                                             curnumcards)
-        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindx, trumpinfo, cursuit, curtype,
+        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype,
                                             curnumcards)
 
     def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit='epic', curtype='shibal',
                                     curnumcards=0):
         mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype,
                                      curnumcards)
+=======
+        #DATA IS IN FORM TRUE, CARD LIST
+        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+
+
+    def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
+        mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
+>>>>>>> 705b3ef28c9784dd987477bcc99bc28f2107a2ce
         while not mydata[0]:
             mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit,
                                          curtype, curnumcards)
