@@ -194,7 +194,7 @@ class Round(object):
                     discard_card = Card('2', 's', is_small_joker=True)
                 else:
                     discard_card = Card(card_input[:-1], card_input[-1])
-                discards.append(discard_card)
+                self.discards.append(discard_card)
             else:
                 print("Not a valid input. Please enter a valid input")
         for card in self.discards:
@@ -217,34 +217,19 @@ class Round(object):
 
     def play_turn(self, startplayerindex, trumpinfo):
         # first player moves
-        data1 = get_input_from_player_index(startplayerindex, startplayerindex, trumpinfo)
+        data1 = self.get_input_from_player_index(startplayerindex, startplayerindex, trumpinfo)
         # DATA IS IN FORM TRUE, CARD LIST, CURRENT SUIT PLAYED, CURRENT TYPE(PAIR, ETC) IN LIST FORMAT
         cursuit = data1[2]
         curtype = data1[3]
         curnumcards = len(data1[1])
-<<<<<<< HEAD
-        # DATA IS IN FORM TRUE, CARD LIST
-        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype,
-                                            curnumcards)
-        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype,
-                                            curnumcards)
-        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype,
-                                            curnumcards)
-
-    def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit='epic', curtype='shibal',
-                                    curnumcards=0):
-        mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype,
-                                     curnumcards)
-=======
         #DATA IS IN FORM TRUE, CARD LIST
-        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
-        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
-        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data2 = self.get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data3 = self.get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data4 = self.get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
 
 
     def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
         mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
->>>>>>> 705b3ef28c9784dd987477bcc99bc28f2107a2ce
         while not mydata[0]:
             mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit,
                                          curtype, curnumcards)
