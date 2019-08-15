@@ -84,7 +84,7 @@ def num_cards_in_suit(hand, suit, trumpinfo):
 
 #RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, trumpinfo, curSuit = '', curType = '', curNumCards = 0):
-
+    1
 
 # RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):

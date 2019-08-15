@@ -9,7 +9,7 @@ current attacker's points
 also play the round:
 dealing, compare cards, and playing
 """
-from deck import *
+from single_player.deck import *
 import single_player.player_input_methods as pim
 
 
@@ -22,12 +22,13 @@ class Round(object):
     trump_suit_cnt = number of cards used to liang the trump suit (exceptions: 0 if no liang and 3 if wu zhu)
     trump_rank = rank of trump card
     suit_played = suit of first card played (the suit that everyone must follow)
+    discards = list of discarded cards by zhuang jia
     """
     num_di_pai = 8
 
     def __init__(self, players):
         self.deck = Deck()
-        assert(len(players) == 4)
+        assert (len(players) == 4)
         self.players = players
 
         # find ID of zhuang jia, set_zhuang_jia is True if someone is zhuang jia
@@ -41,6 +42,7 @@ class Round(object):
         self.trump_suit_cnt = 0
         self.trump_rank = players[0].get_trump_rank
         self.suit_played = "none"
+        self.discards = []
 
     def deal(self):
         self.deck.shuffle()
@@ -104,7 +106,6 @@ class Round(object):
                 print("You don't have the cards necessary for that liang")
         else:
             print("You don't have the cards necessary for that liang")
-        
 
     def cmp_cards(self, a, b):
         # Compares cards in game, with consideration to the first card played
@@ -143,64 +144,61 @@ class Round(object):
             else:
                 return -1
 
-
     def flip_di_pai(self):
-        #Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
-        #Otherwise makes the largest card the trump rank
+        # Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
+        # Otherwise makes the largest card the trump rank
         largest_rank_suit = "none"
         largest_rank = 1
         rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
                      'K': 13, 'A': 14}
         for card in self.deck.cards:
-            print card
+            print(card)
             if card.is_big_joker or card.is_small_joker:
                 self.trump_suit == "none"
-                print ("The game is now WuZhu")
+                print("The game is now WuZhu")
                 return
             elif card.rank == self.trump_rank:
                 self.trump_suit == card.suit
-                print ("The trump suit is now %s" % card.suit)
+                print("The trump suit is now %s" % card.suit)
                 return
             else:
                 if rank_dict[card.rank] > largest_rank:
                     largest_rank_suit = card.suit
         self.trump_suit = largest_rank_suit
-        print ("The trump suit is now %s" % self.trump_suit)
+        print("The trump suit is now %s" % self.trump_suit)
         return
 
     def choose_di_pai(self):
-        zhuangjia = self.players[self.zhuang_jia_id]
         for card in self.deck.cards:
-            zhuangjia.draw(card)
-        discards = []
-        while len(discards) < 8:
-            print ("Your discards so far are: "),
-            for card in discards: print (card)
-            print ("Enter the card that you want to discard. Or, enter \'undo\' to return "
-                               "a card from the discard to your hand")
+            self.players[self.zhuang_jia_id].draw(card)
+        while len(self.discards) < 8:
+            print("Your discards so far are: ")
+            for card in self.discards:
+                print(card)
+            print("Enter the card that you want to discard. Or, enter \'undo\' to return "
+                  "a card from the discard to your hand")
             card_input = pim.get_current_player_input()
             if card_input.lower() == 'undo':
-                print ("Enter the card that you want to return to your hand")
+                print("Enter the card that you want to return to your hand")
                 if card_input == "BJo":
-                    discard_card = Card('2', 's', is_big_joker = True)
+                    discard_card = Card('2', 's', is_big_joker=True)
                 elif card_input == "SJo":
-                    discard_card = Card('2', 's', is_small_joker = True)
+                    discard_card = Card('2', 's', is_small_joker=True)
                 else:
                     discard_card = Card(card_input[:-1], card_input[-1])
-                discards.remove(discard_card)
+                self.discards.remove(discard_card)
             elif pim.is_card(card_input):
                 if card_input == "BJo":
-                    discard_card = Card('2', 's', is_big_joker = True)
+                    discard_card = Card('2', 's', is_big_joker=True)
                 elif card_input == "SJo":
-                    discard_card = Card('2', 's', is_small_joker = True)
+                    discard_card = Card('2', 's', is_small_joker=True)
                 else:
                     discard_card = Card(card_input[:-1], card_input[-1])
                 discards.append(discard_card)
             else:
-                print ("Not a valid input. Please enter a valid input")
-        for card in discards:
-            zhuangjia.play(card)
-
+                print("Not a valid input. Please enter a valid input")
+        for card in self.discards:
+            self.players[self.zhuang_jia_id].play(card)
 
     def get_trump_info(self):
         trumpinfo = {
@@ -209,31 +207,34 @@ class Round(object):
         }
         return trumpinfo
 
-
     def play_round(self):
         self.deal()
         # todo implement trump ranking (depends on trump rank and trump suit)
 
-        #pass in trump info as a dictionary, i'll need it
+        # pass in trump info as a dictionary, i'll need it
         while len(self.players[0].get_hand()) > 0:
             self.play_turn(self.zhuang_jia__id, get_trump_info())
-
 
     def play_turn(self, startplayerindex, trumpinfo):
         # first player moves
         data1 = get_input_from_player_index(startplayerindex, startplayerindex, trumpinfo)
-        #DATA IS IN FORM TRUE, CARD LIST, CURRENT SUIT PLAYED, CURRENT TYPE(PAIR, ETC) IN LIST FORMAT
+        # DATA IS IN FORM TRUE, CARD LIST, CURRENT SUIT PLAYED, CURRENT TYPE(PAIR, ETC) IN LIST FORMAT
         cursuit = data1[2]
         curtype = data1[3]
         curnumcards = len(data1[1])
-        #DATA IS IN FORM TRUE, CARD LIST
-        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
-        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
-        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
+        # DATA IS IN FORM TRUE, CARD LIST
+        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindx, trumpinfo, cursuit, curtype,
+                                            curnumcards)
+        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindx, trumpinfo, cursuit, curtype,
+                                            curnumcards)
+        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindx, trumpinfo, cursuit, curtype,
+                                            curnumcards)
 
-
-    def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
-        mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
+    def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit='epic', curtype='shibal',
+                                    curnumcards=0):
+        mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype,
+                                     curnumcards)
         while not mydata[0]:
-            mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
+            mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit,
+                                         curtype, curnumcards)
         return mydata

@@ -3,7 +3,6 @@ Keep track of:
 player's hand
 """
 
-from deck import *
 
 class Player(object):
     """
@@ -95,8 +94,7 @@ class Player(object):
         self.hand.remove(card)
 
 
-
-# comparitor for cards in the player's hand. This compares cards based on suit to order them in the player's hand.
+# comparator for cards in the player's hand. This compares cards based on suit to order them in the player's hand.
 def card_cmp(card1, card2, trump_suit, trump_rank):
     if card1 == card2:
         return 0

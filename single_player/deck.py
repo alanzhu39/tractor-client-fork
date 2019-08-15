@@ -17,9 +17,9 @@ class Card(object):
 
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
     suits = ['clubs', 'diamonds', 'hearts', 'spades']
-    suit_map = {'clubs':'\u2663', 'diamonds':'\u2666', 'hearts':'\u2665', 'spades':'\u2660'}
+    suit_map = {'clubs': '\u2663', 'diamonds': '\u2666', 'hearts': '\u2665', 'spades': '\u2660'}
 
-    def __init__(self, rank, suit, ID = 0, is_big_joker = False, is_small_joker = False):
+    def __init__(self, rank, suit, ID=0, is_big_joker=False, is_small_joker=False):
         self.rank = rank
         self.suit = suit
         self.ID = ID
@@ -33,7 +33,7 @@ class Card(object):
         if self.is_small_joker:
             return 'SJo'
         return self.rank + Card.suit_map[self.suit]
-    
+
     def __eq__(self, other):
         if self.is_big_joker and other.is_big_joker:
             return True
@@ -72,7 +72,7 @@ class Deck(object):
         i += 1
         self.cards.append(Card('', '', i, True, False))
         i += 1
-        assert(i == 108)
+        assert (i == 108)
 
     def shuffle(self):
         random.shuffle(self.cards)
@@ -82,7 +82,7 @@ class Deck(object):
 
     def __len__(self):
         return len(self.cards)
-        
+
     def print_deck(self):
         for s in self.cards:
             print(s)
