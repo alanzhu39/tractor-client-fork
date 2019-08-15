@@ -211,9 +211,11 @@ class Round(object):
         self.deal()
         # todo implement trump ranking (depends on trump rank and trump suit)
 
-        # pass in trump info as a dictionary, i'll need it
+        # pass in trump info as a dictionary
+        self.play_turn(self.zhuang_jia_id, self.get_trump_info())
         while len(self.players[0].get_hand()) > 0:
-            self.play_turn(self.zhuang_jia_id, self.get_trump_info())
+            # todo need id of player starting next turn
+            1
 
     def play_turn(self, startplayerindex, trumpinfo):
         # first player moves
@@ -222,11 +224,10 @@ class Round(object):
         cursuit = data1[2]
         curtype = data1[3]
         curnumcards = len(data1[1])
-        #DATA IS IN FORM TRUE, CARD LIST
+        # DATA IS IN FORM TRUE, CARD LIST
         data2 = self.get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
         data3 = self.get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
         data4 = self.get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
-
 
     def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
         mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
