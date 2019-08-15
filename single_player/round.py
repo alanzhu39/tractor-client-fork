@@ -227,9 +227,9 @@ class Round(object):
         curtype = data1[3]
         curnumcards = len(data1[1])
         #DATA IS IN FORM TRUE, CARD LIST
-        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
-        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
-        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindx, trumpinfo, cursuit, curtype, curnumcards)
+        data2 = get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data3 = get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
+        data4 = get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
 
 
     def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
