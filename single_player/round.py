@@ -245,6 +245,11 @@ class Round(object):
         return trumpinfo
 
 
+    def is_trump(self, card):
+        if card.is_joker:
+            return True
+        if 
+
     def get_suit(self, card):
 
     def get_first_player_move(self, firstplayer, trumpinfo):
