@@ -52,13 +52,30 @@ class Round(object):
         # todo implement trump ranking (depends on trump rank and trump suit)
         # play out the turns
         # pass in trump info as a dictionary
-        self.play_turn(self.zhuang_jia_id, self.get_trump_info())
+        info = self.play_turn(self.zhuang_jia_id, self.get_trump_info())
         while len(self.players[0].get_hand()) > 0:
             # todo need id of player starting next turn
-            1
+            # assumes that play_turn return an info dictionary
+            trick_winner = info['trick_winner']
+            info = self.play_turn(trick_winner, self.get_trump_info())
+
         # reveal di pai and add to attacker's points if necessary
-        # attacker_multiplier = 2*(number of cards played in last turn)*(did attackers win last turn?)
-        # attacker_points += attacker_multiplier*(number of points in di pai)
+        attacker_multiplier = 2 * info['num_cards']
+        if (info['trick_winner'] == self.zhuang_jia_id) or (info['trick_winner'] == (self.zhuang_jia_id + 2) % 4):
+            attacker_multiplier = 0
+
+        di_pai_points = 0
+        print("Di pai: ", end='')
+        for card in self.discards:
+            di_pai_points += card.point_value
+            print(card, end=' ')
+        print('')
+
+        if attacker_multiplier > 0:
+            print("Attackers won the last trick, adding %d * %d = %d points."
+                  % (attacker_multiplier, di_pai_points, attacker_multiplier * di_pai_points))
+            self.attacker_points += attacker_multiplier * di_pai_points
+
         return self.attacker_points
 
     def deal(self):

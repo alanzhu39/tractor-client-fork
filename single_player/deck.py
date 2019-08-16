@@ -26,6 +26,12 @@ class Card(object):
         self.is_big_joker = is_big_joker
         self.is_small_joker = is_small_joker
         self.is_joker = is_big_joker or is_small_joker
+        if self.rank == '5':
+            self.point_value = 5
+        elif self.rank == '10' or self.rank == 'K':
+            self.point_value = 10
+        else:
+            self.point_value = 0
 
     def __str__(self):
         if self.is_big_joker:
@@ -47,11 +53,16 @@ class Card(object):
 class Pair(object):
     def __init__(self, card):
         self.card = card
+        self.point_value = 2 * card.point_value
 
 
 class Tractor(object):
+    # as of now, the list of cards contains both cards in each pair
     def __init__(self, cards):
         self.cards = cards[:]
+        self.point_value = 0
+        for card in cards:
+            self.point_value += card.point_value
 
 
 class Deck(object):
