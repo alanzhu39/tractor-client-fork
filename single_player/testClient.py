@@ -1,6 +1,6 @@
 import socket
 
-HOST = ''  # The server's hostname or IP address
+HOST = '192.168.1.35'  # The server's hostname or IP address
 PORT = 65432        # The port used by the server
 
 # client socket initialized

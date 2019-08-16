@@ -1,6 +1,6 @@
 import socket
 
-HOST = ''  # Standard loopback interface address (localhost)
+HOST = '192.168.1.35'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 
 # server socket initialized
