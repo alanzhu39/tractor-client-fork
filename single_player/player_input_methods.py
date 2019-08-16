@@ -1,7 +1,7 @@
 from single_player.player import Player
 from single_player.deck import Card
 
-def get_current_player_input():
+def get_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
     response = input().split()
     return response

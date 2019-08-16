@@ -241,21 +241,25 @@ class Round(object):
         }
         return trumpinfo
 
-    def play_turn(self, startplayerindex, trumpinfo):
-        # first player moves
-        data1 = self.get_input_from_player_index(startplayerindex, startplayerindex, trumpinfo)
-        # DATA IS IN FORM TRUE, CARD LIST, CURRENT SUIT PLAYED, CURRENT TYPE(PAIR, ETC) IN LIST FORMAT
-        cursuit = data1[2]
-        curtype = data1[3]
-        curnumcards = len(data1[1])
-        # DATA IS IN FORM TRUE, CARD LIST
-        data2 = self.get_input_from_player_index((startplayerindex + 1) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
-        data3 = self.get_input_from_player_index((startplayerindex + 2) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
-        data4 = self.get_input_from_player_index((startplayerindex + 3) % 4, startplayerindex, trumpinfo, cursuit, curtype, curnumcards)
 
-    def get_input_from_player_index(self, index, startplayerindex, trumpinfo, cursuit = 'epic', curtype = 'shibal', curnumcards = 0):
-        mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit, curtype, curnumcards)
-        while not mydata[0]:
-            mydata = pim.get_valid_input(self.players[index], self.players[startplayerindex], trumpinfo, cursuit,
-                                         curtype, curnumcards)
-        return mydata
+    def get_suit(self, card):
+
+    def get_first_player_move(self, firstplayer, trumpinfo):
+        fp_input = pim.get_player_input()
+        #Check if input is a list of valid indeces
+        if not pim.is_valid_input(firstplayer, fp_input):
+            return {"movecode": "invalid indeces"}
+        fp_hand = firstplayer.get_hand()
+        suitset = {}
+
+
+
+    def play_turn(self, players, sp_index, trumpinfo):
+        current_suit = "trump"
+        current_type = []
+        player_with_biggest_hand = players[sp_index]
+        firstplayer = players[sp_index]
+        while True:
+            fpi = self.get_first_player_move(firstplayer, trumpinfo)
+
+
