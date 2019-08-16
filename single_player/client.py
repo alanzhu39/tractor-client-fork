@@ -1,12 +1,11 @@
 import pygame
-from PodSixNet.Connection import ConnectionListener, connection
 from time import sleep
 
 class TractorClient(ConnectionListener):
 
     def initGraphics(self):
         # creates surface from uploaded card image
-        self.testCard = pygame.transform.scale(pygame.image.load("C:\\Users\\Alan Zhu\\Documents\\GitHub\\tractor-client\\single_player\\cards_jpeg\\2C.jpg"),(66,101))
+        self.testCard = pygame.transform.scale(pygame.image.load("cards_jpeg\\2C.jpg"),(66,101))
         
     def __init__(self):
         
@@ -21,7 +20,6 @@ class TractorClient(ConnectionListener):
         self.clock=pygame.time.Clock()
         self.initGraphics()
         
-        self.Connect()
         
     def drawBoard(self):
         # draws card on screen
@@ -30,9 +28,6 @@ class TractorClient(ConnectionListener):
     def update(self):
         # make the game 60 fps
         self.clock.tick(60)
-
-        connection.Pump()
-        self.Pump()
 
         # clear the screen
         self.screen.fill(0)

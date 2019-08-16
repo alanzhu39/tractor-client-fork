@@ -59,7 +59,7 @@ class Player(object):
 
     def print_hand(self):
         for card in self.hand:
-            print(card, ' ')
+            print(card, end=' ')
         print('')
 
     def draw(self, card):

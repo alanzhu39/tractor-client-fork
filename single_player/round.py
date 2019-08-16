@@ -41,10 +41,13 @@ class Round(object):
 
         self.trump_suit = "none"
         self.trump_suit_cnt = 0
-        self.trump_rank = players[0].get_trump_rank
+        self.trump_rank = players[self.zhuang_jia_id].get_trump_rank() # assumes there is a zhuang jia
         self.suit_played = "none"
         self.discards = []
         self.attacker_points = 0
+        # assumes there is a zhuang jia
+        print("Round starting: " + players[self.zhuang_jia_id].get_name()
+              + " is zhuang jia and the trump rank is " + self.trump_rank)
 
     # returns number of points attackers earned
     def play_round(self):
