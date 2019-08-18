@@ -277,6 +277,11 @@ class Round(object):
             return {"movecode": "invalid indeces"}
         fp_hand = firstplayer.get_hand()
         suitset = {}
+        for each_index in fp_input:
+            suitset.add(self.get_suit(firstplayer.get_hand()[each_index]))
+        if len(suitset) != 1:
+            return {"movecode": "suitset error"}
+
 
 
 
