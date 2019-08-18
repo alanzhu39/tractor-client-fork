@@ -49,18 +49,42 @@ class Card(object):
             return True
         return False
 
+    def get_suit(self):
+        return str(self.suit)
+
+    def get_rank(self):
+        return str(self.rank)
+
+    def get_is_joker(self):
+        return True if self.is_joker else False
+
+    def get_is_big_joker(self):
+        return True if self.is_big_joker else  False
+
+    def get_is_small_joker(self):
+        return True if self.is_small_joker else False
 
 class Pair(object):
-    def __init__(self, card):
+    def __init__(self, card, suit):
         self.card = card
-        self.point_value = 2 * card.point_value
+        self.suit = suit
+
+    def get_card(self):
+        return self.card
+
+    def get_suit(self):
+        return self.suit
+
+
+
+
+
 
 
 class Tractor(object):
     # as of now, the list of cards contains both cards in each pair
     def __init__(self, cards):
         self.cards = cards[:]
-        self.point_value = 0
         for card in cards:
             self.point_value += card.point_value
 

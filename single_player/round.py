@@ -214,7 +214,7 @@ class Round(object):
                 print(card)
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
                   "a card from the discard to your hand")
-            card_input = pim.get_current_player_input()
+            card_input = pim.get_player_input()
             if card_input.lower() == 'undo':
                 print("Enter the card that you want to return to your hand")
                 if card_input == "BJo":
@@ -244,13 +244,31 @@ class Round(object):
         }
         return trumpinfo
 
-
     def is_trump(self, card):
-        if card.is_joker:
+        trumpinfo = self.get_trump_info()
+        if card.get_is_joker:
             return True
-        if 
+        if card.get_suit() == trumpinfo['suit']:
+            return True
+        if card.get_rank() == trumpinfo['rank']:
+            return True
+        return False
 
     def get_suit(self, card):
+        if self.is_trump(card):
+            return "trump"
+        else:
+            return card.get_suit()
+
+    #returns true if pair1 played greater than pair2
+    def pair_gt(self, pair1, pair2):
+        if pair1.get_suit() == 'trump' and pair2.get_suit() != 'trump':
+            return True
+        elif pair2.suit == pair2.get_suit():
+            if self.cmp_cards(pair1.get_card(), pair2.get_card()) == 1:
+                return True
+        else:
+            return False
 
     def get_first_player_move(self, firstplayer, trumpinfo):
         fp_input = pim.get_player_input()
