@@ -1,10 +1,24 @@
 from single_player.player import Player
 from single_player.deck import Card
 
+
 def get_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
     response = input().split()
     return int(response)
+
+
+def is_card(card_string):
+    if len(card_string) == 3:
+        if card_string == 'BJo' or card_string == 'SJo':
+            return True
+        suit = card_string[2]
+        if (suit == 'c' or suit == 'd' or suit == 'h' or suit == 's') and card_string[:2] == '10':
+            return True
+    if len(card_string) == 2:
+        suit = card_string[1]
+        if (suit == 'c' or suit == 'd' or suit == 'h' or suit == 's') and card_string[0].isDigit():
+            return True
 
 
 def is_pair(card1, card2):
@@ -53,11 +67,6 @@ def num_cards_in_suit(hand, suit, trumpinfo):
             if hand[i].suit == suit:
                 cnt + 1
     return cnt
-
-
-#RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
-def get_valid_input(player, startplayer, trumpinfo, curSuit = '', curType = '', curNumCards = 0):
-    1
 
 # RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
 def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):
@@ -137,6 +146,3 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
 
         else:
             return False, []
-
-
-
