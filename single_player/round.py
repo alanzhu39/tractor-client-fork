@@ -372,7 +372,7 @@ class Round(object):
             fpi_response = self.return_singles(fpi_hand)
             hand_type.append('single')
         return {"move_code": "valid",
-                "index response": fp_input,
+                "index_response": fp_input,
                 "suit": cur_suit,
                 "fpi_hand": fpi_response,
                 "hand_type": hand_type,
@@ -426,7 +426,7 @@ class Round(object):
             npi_response = self.return_singles(npi_hand)
             has_bigger_single = self.cmp_cards(npi_response[0], biggest_hand[0]) > 0
             return {'move_code': 'valid',
-                    'index response': np_input,
+                    'index_response': np_input,
                     'npi_hand': npi_response,
                     'biggest_hand': npi_response if has_bigger_single else biggest_hand,
                     'biggest_player': player if has_bigger_single else biggest_player,
@@ -436,7 +436,7 @@ class Round(object):
             npi_response = self.return_pairs(npi_hand)
             has_bigger_pair = self.pair_gt(npi_response[0], biggest_hand[0]) > 0
             return {'move_code': 'valid',
-                    'index response': np_input,
+                    'index_response': np_input,
                     'npi_hand': npi_response,
                     'biggest_hand': npi_response if has_bigger_pair else biggest_hand,
                     'biggest_player': player if has_bigger_pair else biggest_player,
@@ -445,7 +445,7 @@ class Round(object):
         else:
             npi_response = self.return_singles(npi_hand)
             return {'move_code': 'valid',
-                    'index response': np_input,
+                    'index_response': np_input,
                     'npi_hand': npi_response,
                     'biggest_hand': biggest_hand,
                     'biggest_player': biggest_player,
@@ -479,7 +479,7 @@ class Round(object):
                      'size': fpi['size'],
                      'biggest_hand': fpi['fpi_hand'],
                      'biggest_player': first_player}
-        self.del_indexes(first_player, fpi['index response'])
+        self.del_indexes(first_player, fpi['index_response'])
 
         for i in range(sp_index + 1, sp_index + 4):
             cur_player_index = i % 4
