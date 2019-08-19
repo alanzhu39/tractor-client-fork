@@ -214,10 +214,8 @@ class Round(object):
             zhuang_jia_player.draw(card)
         print("Your hand after di pai:")
         zhuang_jia_player.print_hand()
+        print("The trump suit is " + self.trump_suit)
         while len(self.discards) != 8:
-            print("Your discards so far are: ", end='')
-            for card in self.discards:
-                print(card, end=' ')
             print("Enter 8 indexes you want to discard:")
             discard_indexes = pim.get_player_input()
             if not pim.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
@@ -226,7 +224,7 @@ class Round(object):
                 break
         #ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
         for each_index in discard_indexes:
-            self.discards.add(zhuang_jia_player.get_hand()[each_index])
+            self.discards.append(zhuang_jia_player.get_hand()[each_index])
             self.del_indexes(zhuang_jia_player, discard_indexes)
 
             '''
