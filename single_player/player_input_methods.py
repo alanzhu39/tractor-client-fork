@@ -3,9 +3,10 @@ from single_player.deck import Card
 
 
 def get_player_input():
-    # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
+    # just player indexes, check if integerse
     response = input().split()
-    return list(map(int, response))
+    integer_list = [s for s in response if s.isdigit()]
+    return list(map(int, integer_list))
 
 
 def is_card(card_string):
