@@ -5,7 +5,7 @@ from single_player.deck import Card
 def get_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
     response = input().split()
-    return int(response)
+    return list(map(int, response))
 
 
 def is_card(card_string):
