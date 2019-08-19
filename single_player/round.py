@@ -220,7 +220,7 @@ class Round(object):
                 print(card, end=' ')
             print("Enter 8 indexes you want to discard:")
             discard_indexes = pim.get_player_input()
-            if not pim.is_valid_input(discard_indexes) or not len(discard_indexes) == 8:
+            if not pim.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
                 continue
             else:
                 break
@@ -228,7 +228,6 @@ class Round(object):
         for each_index in discard_indexes:
             self.discards.add(zhuang_jia_player.get_hand()[each_index])
             self.del_indexes(zhuang_jia_player, discard_indexes)
-
 
             '''
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
