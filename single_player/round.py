@@ -41,7 +41,7 @@ class Round(object):
 
         self.trump_suit = "none"
         self.trump_suit_cnt = 0
-        self.trump_rank = players[self.zhuang_jia_id].get_trump_rank() # assumes there is a zhuang jia
+        self.trump_rank = players[self.zhuang_jia_id].get_trump_rank()  # assumes there is a zhuang jia
         self.suit_played = "none"
         self.discards = []
         self.attacker_points = 0
@@ -260,7 +260,7 @@ class Round(object):
         else:
             return card.get_suit()
 
-    #returns true if pair1 played greater than pair2
+    # returns true if pair1 played greater than pair2
     def pair_gt(self, pair1, pair2):
         if pair1.get_suit() == 'trump' and pair2.get_suit() != 'trump':
             return True
@@ -270,12 +270,12 @@ class Round(object):
         else:
             return False
 
-    #FINDS A PAIR ON PRECONDITION THAT ENTIRE HAND IS OF ONE SUIT
+    # FINDS A PAIR ON PRECONDITION THAT ENTIRE HAND IS OF ONE SUIT
     def contains_pair(self, hand):
         suit = self.get_suit(hand[0])
         return self.contains_pair_in_suit(hand, suit)
 
-    #RETURNS THE NUMBER OF PAIRS IN A CERTAIN SUIT
+    # RETURNS THE NUMBER OF PAIRS IN A CERTAIN SUIT
     def contains_pair_in_suit(self, hand, suit):
         numpairs = 0
         for card in hand:
@@ -296,7 +296,7 @@ class Round(object):
         else:
             return False
 
-    #ASSUMES ALL CARDS ARE IN SAME SuIT
+    # ASSUMES ALL CARDS ARE IN SAME SuIT
     def return_pairs(self, hand):
         list_pair = []
         for card in hand:
@@ -309,6 +309,7 @@ class Round(object):
         list_singles = []
         for card in hand:
             list_singles.append(card)
+        return list_singles
 
     def get_num_points(self, hand):
         total = 0
@@ -321,13 +322,13 @@ class Round(object):
 
     def get_first_player_move(self, firstplayer):
         fp_input = pim.get_player_input()
-        #Check if input is a list of valid indeces
+        # Check if input is a list of valid indeces
         if not pim.is_valid_input(firstplayer, fp_input):
             return {"movecode": "invalid indeces"}
         fp_hand = firstplayer.get_hand()
         suitset = {}
 
-        #Check if is one suit, cursuit
+        # Check if is one suit, cursuit
         for each_index in fp_input:
             suitset.add(self.get_suit(firstplayer.get_hand()[each_index]))
         if len(suitset) != 1:
@@ -338,10 +339,10 @@ class Round(object):
         fpi_hand = []
         for index in fp_input:
             fpi_hand.append(fp_hand[index])
-        #FOR NOW, JUST CHECK IF PAIR OR SINGLE
+        # FOR NOW, JUST CHECK IF PAIR OR SINGLE
         if not self.is_valid_fpi(fpi_hand):
             return {"movecode": "invalid move"}
-        #CHECK FOR LARGEST TRACTOR, THEN LARGEST PAIR, THEN LARGEST SINGLE
+        # CHECK FOR LARGEST TRACTOR, THEN LARGEST PAIR, THEN LARGEST SINGLE
         if len(fpi_hand) == 2:
             fpi_response = self.return_pairs(fpi_hand)[0]
             handtype = 'pair'
@@ -377,7 +378,6 @@ class Round(object):
 
     def get_secondary_player_move(self, player, curhandinfo):
         cursuit = curhandinfo['suit']
-        curhandtype = curhandinfo['handtype']
         handsize = curhandinfo['size']
         np_input = pim.get_player_input()
         if not pim.is_valid_input(player, np_input):
@@ -389,7 +389,7 @@ class Round(object):
         for index in np_input:
             npi_hand.append(np_hand[index])
 
-        #CHECK IF PLAYED PROPER NUMBER OF SINGLES AND PAIRIN SAME SUIT
+        # CHECK IF PLAYED PROPER NUMBER OF SINGLES AND PAIRIN SAME SUIT
         minsingles = min(self.num_cards_in_suit(np_hand, cursuit), handsize)
         if not self.num_cards_in_suit(npi_hand, cursuit) == minsingles:
             return {'movecode': 'insufficient number of current suit'}
@@ -420,19 +420,19 @@ class Round(object):
 
         else:
             npi_response = self.return_singles(npi_hand)
-            return{'movecode': 'valid',
-                   'index response': np_input,
-                   'npi_hand': npi_response,
-                   'biggest_hand': biggesthand,
-                   'biggest_player': biggestplayer}
+            return {'movecode': 'valid',
+                    'index response': np_input,
+                    'npi_hand': npi_response,
+                    'biggest_hand': biggesthand,
+                    'biggest_player': biggestplayer}
 
     def is_attacker(self, player):
-        if player is self.players[self.zhuang_jia_id] or player is self.players[(self.zhuang_jia_id+2)%4]:
+        if player is self.players[self.zhuang_jia_id] or player is self.players[(self.zhuang_jia_id + 2) % 4]:
             return False
         return True
 
     def del_indeces(self, player, indexresponse):
-        for index in sorted(indexresponse, reverse = True):
+        for index in sorted(indexresponse, reverse=True):
             del player.get_hand()[index]
 
     def play_turn(self, sp_index):
@@ -456,7 +456,7 @@ class Round(object):
                     'biggest player': biggest_player}
         self.del_indeces(firstplayer, fpi['index response'])
 
-        for i in range(sp_index+1, sp_index+4):
+        for i in range(sp_index + 1, sp_index + 4):
             cindex = i % 4
             while True:
                 npi = self.get_secondary_player_move(self.players[cindex], infodict)
@@ -472,12 +472,5 @@ class Round(object):
         if self.is_attacker(infodict['biggest player']):
             self.attacker_points += totalpoints
 
-        return{'trick_winner': self.players.index(infodict['biggest player']),
-               'num_cards': infodict['size']}
-        """
-        if len(self.players[0].get_hand()) == 0:
-            self.end_round(infodict)
-        else:
-            self.play_turn(self.players.index(infodict['biggest player']))
-        """
-
+        return {'trick_winner': self.players.index(infodict['biggest player']),
+                'num_cards': infodict['size']}
