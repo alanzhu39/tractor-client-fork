@@ -186,6 +186,7 @@ class Round(object):
     def flip_di_pai(self):
         # Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
         # Otherwise makes the largest card the trump rank
+        print("No liang, flipping di pai...")
         largest_rank_suit = "none"
         largest_rank = 1
         rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
@@ -210,6 +211,8 @@ class Round(object):
     def choose_di_pai(self):
         for card in self.deck.cards:
             self.players[self.zhuang_jia_id].draw(card)
+        print("Your hand after di pai:")
+        self.players[self.zhuang_jia_id].print_hand()
         while len(self.discards) < 8:
             print("Your discards so far are: ")
             for card in self.discards:
