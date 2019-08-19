@@ -270,6 +270,35 @@ class Round(object):
         else:
             return False
 
+    #FINDS A PAIR ON PRECONDITION THAT ENTIRE HAND IS OF ONE SUIT
+    def contains_pair(self, hand):
+        suit = self.get_suit(hand[0])
+        return self.contains_pair(hand, suit)
+
+    #RETURNS THE NUMBER OF PAIRS IN A CERTAIN SUIT
+    def contains_pair(self, hand, suit):
+        numpairs = 0
+        for card in hand:
+            if self.get_suit(card) != suit:
+                continue
+            for card2 in hand:
+                if card is not card2 and card == card2:
+                    numpairs += 1
+        numpairs /= 2
+        return numpairs
+
+
+    def is_valid_fpi(self, hand):
+        #SHUAICHECK
+        #FIND BIGGEST TRACTOR
+        handtype = []
+        card_response = []
+        if len(hand) == 2:
+            if self.contains_pair(hand) == 1:
+                handtype.append('pair')
+                card_response.append(Pair(hand[0], self.get_suit(hand[0])))
+
+
     def get_first_player_move(self, firstplayer, trumpinfo):
         fp_input = pim.get_player_input()
         #Check if input is a list of valid indeces
@@ -277,10 +306,18 @@ class Round(object):
             return {"movecode": "invalid indeces"}
         fp_hand = firstplayer.get_hand()
         suitset = {}
+        #Check if is one suit, cursuit
         for each_index in fp_input:
             suitset.add(self.get_suit(firstplayer.get_hand()[each_index]))
         if len(suitset) != 1:
             return {"movecode": "suitset error"}
+        else:
+            cursuit = suitset[0]
+        fpi_hand = []
+        for index in fp_input:
+            fpi_hand.append(fp_hand[index])
+        fpi = self.is_valid_fpi(fpi_hand)
+
 
 
 
