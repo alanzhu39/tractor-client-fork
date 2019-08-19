@@ -225,7 +225,7 @@ class Round(object):
         #ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
         for each_index in discard_indexes:
             self.discards.append(zhuang_jia_player.get_hand()[each_index])
-            self.del_indexes(zhuang_jia_player, discard_indexes)
+        self.del_indexes(zhuang_jia_player, discard_indexes)
 
             '''
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
