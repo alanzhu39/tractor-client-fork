@@ -90,7 +90,7 @@ class Round(object):
             self.players[current_drawer].draw(self.deck.pop())
             print(self.players[current_drawer].name)
             self.players[current_drawer].print_hand()
-            self.liang_query(current_drawer)
+            # self.liang_query(current_drawer)
             current_drawer = (current_drawer + 1) % 4
         # no liang -> flip di pai
         if self.trump_suit == "none":
@@ -227,6 +227,7 @@ class Round(object):
             self.discards.append(zhuang_jia_player.get_hand()[each_index])
         self.del_indexes(zhuang_jia_player, discard_indexes)
 
+
         '''
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
                   "a card from the discard to your hand")
@@ -263,7 +264,7 @@ class Round(object):
 
     def is_trump(self, card):
         trump_info = self.get_trump_info()
-        if card.get_is_joker:
+        if card.get_is_joker():
             return True
         if card.get_suit() == trump_info['suit']:
             return True
@@ -334,7 +335,7 @@ class Round(object):
             if card.get_rank() == '5':
                 total += 5
             elif card.get_rank() == '10' or card.get_rank() == 'K':
-                total += '10'
+                total += 10
         return total
 
     def get_first_player_move(self, first_player):
@@ -401,6 +402,7 @@ class Round(object):
     def get_secondary_player_move(self, player, cur_hand_info):
         cur_suit = cur_hand_info['suit']
         hand_size = cur_hand_info['size']
+        print("Current suit: " + cur_suit + ", current hand size: " + str(hand_size))
         np_input = pim.get_player_input()
         if not pim.is_valid_input(player, np_input):
             return {"move_code": "invalid indexes"}
@@ -465,7 +467,6 @@ class Round(object):
         print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.')
         first_player.print_hand()
         while True:
-            print("Hello " + first_player.get_name()+'. ', end='')
             fpi = self.get_first_player_move(first_player)
             if fpi['move_code'] != 'valid':
                 print("ERROR: " + fpi['move_code'])
