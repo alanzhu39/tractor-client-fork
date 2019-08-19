@@ -324,6 +324,7 @@ class Round(object):
 
     def get_first_player_move(self, first_player):
         fp_input = pim.get_player_input()
+
         # Check if input is a list of valid indexes
         if not pim.is_valid_input(first_player, fp_input):
             return {"move_code": "invalid indexes"}
@@ -445,7 +446,10 @@ class Round(object):
 
     def play_turn(self, sp_index):
         first_player = self.players[sp_index]
+        print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.')
+        first_player.print_hand()
         while True:
+            print("Hello " + first_player.get_name()+'. ', end='')
             fpi = self.get_first_player_move(first_player)
             if fpi['move_code'] != 'valid':
                 print("ERROR: " + fpi['move_code'])
@@ -463,8 +467,11 @@ class Round(object):
 
         for i in range(sp_index + 1, sp_index + 4):
             cur_player_index = i % 4
+            cur_player = self.players[cur_player_index]
+            print("Hello " + cur_player.get_name() + '. Please enter the cards you would like to play.')
+            cur_player.print_hand()
             while True:
-                npi = self.get_secondary_player_move(self.players[cur_player_index], info_dict)
+                npi = self.get_secondary_player_move(cur_player, info_dict)
                 if npi['move_code'] != 'valid':
                     print("ERROR: " + npi['move_code'])
                     continue

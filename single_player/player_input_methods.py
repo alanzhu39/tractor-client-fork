@@ -4,7 +4,6 @@ from single_player.deck import Card
 
 def get_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
-    print("Please enter the indexes of the cards you want to play separated by spaces.[0 indexed]")
     response = input().split()
     return int(response)
 
