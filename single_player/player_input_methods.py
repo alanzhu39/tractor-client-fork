@@ -28,7 +28,7 @@ def is_pair(card1, card2):
 
 def is_valid_input(player, response):
     for each_index in response:
-        if int(each_index) < 0 or int(each_index) > len(player.get_hand()):
+        if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
             return False
         if len(set(response)) != len(response):
             return False
@@ -68,7 +68,7 @@ def num_cards_in_suit(hand, suit, trumpinfo):
                 cnt + 1
     return cnt
 
-# RETURNS THE HANDTYPE AND CARDS PLAYED IN A TUPLE
+# OUTDATED
 def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCards):
     name = player.get_name()
     # IF PERSON IS FIRST TO ACT

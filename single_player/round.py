@@ -209,14 +209,28 @@ class Round(object):
         return
 
     def choose_di_pai(self):
+        zhuang_jia_player = self.players[self.zhuang_jia_id]
         for card in self.deck.cards:
-            self.players[self.zhuang_jia_id].draw(card)
+            zhuang_jia_player.draw(card)
         print("Your hand after di pai:")
-        self.players[self.zhuang_jia_id].print_hand()
-        while len(self.discards) < 8:
-            print("Your discards so far are: ")
+        zhuang_jia_player.print_hand()
+        while len(self.discards) != 8:
+            print("Your discards so far are: ", end='')
             for card in self.discards:
-                print(card)
+                print(card, end=' ')
+            print("Enter 8 indexes you want to discard:")
+            discard_indexes = pim.get_player_input()
+            if not pim.is_valid_input(discard_indexes) or not len(discard_indexes) == 8:
+                continue
+            else:
+                break
+        #ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
+        for each_index in discard_indexes:
+            self.discards.add(zhuang_jia_player.get_hand()[each_index])
+            self.del_indexes(zhuang_jia_player, discard_indexes)
+
+
+            '''
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
                   "a card from the discard to your hand")
             card_input = pim.get_player_input()
@@ -241,6 +255,7 @@ class Round(object):
                 print("Not a valid input. Please enter a valid input")
         for card in self.discards:
             self.players[self.zhuang_jia_id].play(card)
+            '''
 
     def get_trump_info(self):
         trump_info = {
