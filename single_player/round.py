@@ -311,6 +311,15 @@ class Round(object):
         for card in hand:
             list_singles.append(card)
 
+    def get_num_points(self, hand):
+        total = 0
+        for card in hand:
+            if card.get_rank() == '5':
+                total += 5
+            elif card.get_rank == '10' or card.get_rank == 'K':
+                total += '10'
+        return total
+
 
     def get_first_player_move(self, firstplayer):
         fp_input = pim.get_player_input()
@@ -343,7 +352,8 @@ class Round(object):
                 "index response": fp_input,
                 "suit": cursuit,
                 "fpi_hand": fpi_response,
-                "handtype": handtype}
+                "handtype": handtype
+                'points': self.get_num_points(fpi_hand)}
 
     def num_card_in_suit(self, hand, suit):
         total = 0
@@ -367,28 +377,97 @@ class Round(object):
     def get_secondary_player_move(self, player, curhandinfo):
         cursuit = curhandinfo['suit']
         curhandtype = curhandinfo['handtype']
+        handsize = curhandinfo['size']
         np_input = pim.get_player_input()
         if not pim.is_valid_input(player, np_input):
             return {"movecode": "invalid indeces"}
+        if not handsize == len(np_input):
+            return {"movecode": "wrong number of cards"}
         np_hand = player.get_hand()
         npi_hand = []
         for index in np_input:
             npi_hand.append(np_hand[index])
-        if 
+        #CHECK IF PLAYED PROPER NUMBER OF SINGLES AND PAIRIN SAME SUIT
+        minsingles = min(self.num_cards_in_suit(np_hand, cursuit), handsize)
+        if not self.num_cards_in_suit(npi_hand, cursuit) == minsingles:
+            return {'movecode': 'insufficient number of current suit'}
+        if minsingles == 2:
+            minpair = min(self.num_pairs_in_suit(np_hand, cursuit), 1)
+            if not self.num_cards_in_suit(npi_hand, cursuit) == minpair:
+                return {'movecode': 'insufficient number of pairs'}
+        theirhand = curhandinfo['biggest hand']
+        biggestplayer = curhandinfo['biggest player']
+        if handsize == 1:
+            npi_response = self.return_singles(npi_hand)
+            return {'movecode': 'valid',
+                    'index response': np_input,
+                    'npi_hand': npi_response,
+                    'biggest_hand': npi_response if self.cmp_cards(npi_hand[0], theirhand[0]) > 0 else theirhand,
+                    'biggest_player': player if self.cmp_cards(npi_hand[0], theirhand[0]) > 0 else biggestplayer
+                    'points': self.get_num_points(npi_hand)}
+
+        if handsize == 2 and self.contains_pair(npi_hand):
+            npi_response = self.return_pairs(npi_hand)
+            return {'movecode': 'valid',
+                    'index response': np_input,
+                    'npi_hand': npi_response,
+                    'biggest_hand': npi_response if self.pair_gt(npi_response[0], theirhand[0]) > 0 else theirhand,
+                    'biggest_player': player if self.pair_gt(npi_response[0], theirhand[0]) > 0 else biggestplayer,
+                    'points': self.get_num_points(npi_hand)}
+
+    def is_attacker(self, player):
+        if player is self.players[self.zhuang_jia_id] or player is self.players[(self.zhuang_jia_id+2)%4]:
+            return False
+        return True
+
+    def del_indeces(self, player, indexresponse):
+        for index in sorted(indexresponse, reverse = True):
+            del player.get_hand()[index]
+
+    def end_round(self):
+        print(self.attacker_points)
 
 
-
-
-
-
-
-
-    def play_turn(self, players, sp_index, trumpinfo):
-        current_suit = "trump"
-        current_type = []
-        player_with_biggest_hand = players[sp_index]
-        firstplayer = players[sp_index]
+    def play_turn(self, sp_index):
+        firstplayer = self.players[sp_index]
         while True:
-            fpi = self.get_first_player_move(firstplayer, trumpinfo)
-
+            fpi = self.get_first_player_move(firstplayer)
+            if fpi['movecode'] != 'valid':
+                continue
+            else:
+                break
+        cursuit = fpi['suit']
+        handtype = fpi['handtype']
+        biggest_hand = fpi['fpi_hand']
+        biggest_player = firstplayer
+        totalpoints = 0
+        totalpoints += fpi['points']
+        infodict = {'suit': cursuit,
+                    'handtype': handtype,
+                    'size': 2 if handtype == 'pair' else 1,
+                    'biggest hand': biggest_hand,
+                    'biggest player': biggest_player}
+        self.del_indeces(firstplayer, fpi['index response'])
+        for i in range(sp_index+1, sp_index+4):
+            cindex = i%4
+            while True:
+                npi = self.get_secondary_player_move(self.players[cindex], infodict)
+                if npi['movecode'] != 'valid':
+                    continue
+                else:
+                    break
+            infodict['biggest hand'] = npi['biggest_hand']
+            infodict['biggest player'] = npi['biggest_player']
+            totalpoints += npi['points']
+            self.del_indeces(self.players[cindex], npi['index response'])
+        if self.is_attacker(infodict['biggest player']):
+            self.attacker_points +=  totalpoints
+        if len(self.players[0].get_hand()) == 0:
+            if self.is_attacker(infodict['biggest player']):
+                dp_multiplier = 2 * infodict['size']
+                pts_in_di_pai = self.get_num_points(self.discards)
+                totalpoints += dp_multiplier * pts_in_di_pai
+            self.end_round()
+        else:
+            self.play_turn(self.players.index(infodict['biggest player']))
 

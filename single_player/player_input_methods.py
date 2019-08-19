@@ -4,7 +4,7 @@ from single_player.deck import Card
 def get_player_input():
     # format is card rank+card suit (lowercase) or BJo/Sjo all separated by spaces if multiple
     response = input().split()
-    return response
+    return int(response)
 
 
 def is_pair(card1, card2):
