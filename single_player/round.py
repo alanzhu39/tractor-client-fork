@@ -289,17 +289,30 @@ class Round(object):
 
 
     def is_valid_fpi(self, hand):
-        #SHUAICHECK
-        #FIND BIGGEST TRACTOR
-        handtype = []
-        card_response = []
         if len(hand) == 2:
             if self.contains_pair(hand) == 1:
-                handtype.append('pair')
-                card_response.append(Pair(hand[0], self.get_suit(hand[0])))
+                return True
+        elif len(hand) == 1:
+            return True
+        else:
+            return False
+
+    #ASSUMES ALL CARDS ARE IN SAME SuIT
+    def return_pairs(self, hand):
+        list_pair = []
+        for card in hand:
+            for card2 in hand:
+                if card is not card2 and card == card2:
+                    list_pair.append(Pair(card, self.get_suit(card)))
+        return list_pair
+
+    def return_singles(self, hand):
+        list_singles = []
+        for card in hand:
+            list_singles.append(card)
 
 
-    def get_first_player_move(self, firstplayer, trumpinfo):
+    def get_first_player_move(self, firstplayer):
         fp_input = pim.get_player_input()
         #Check if input is a list of valid indeces
         if not pim.is_valid_input(firstplayer, fp_input):
@@ -316,7 +329,55 @@ class Round(object):
         fpi_hand = []
         for index in fp_input:
             fpi_hand.append(fp_hand[index])
-        fpi = self.is_valid_fpi(fpi_hand)
+        #FOR NOW, JUST CHECK IF PAIR OR SINGLE
+        if not self.is_valid_fpi(fpi_hand):
+            return {"movecode": "invalid move"}
+        #CHECK FOR LARGEST TRACTOR, THEN LARGEST PAIR, THEN LARGEST SINGLE
+        if len(fpi_hand) == 2:
+            fpi_response = self.return_pairs(fpi_hand)[0]
+            handtype = 'pair'
+        elif len(fpi_hand) == 1:
+            fpi_response = self.return_singles(fpi_hand)[0]
+            handtype = 'single'
+        return {"movecode": "valid",
+                "index response": fp_input,
+                "suit": cursuit,
+                "fpi_hand": fpi_response,
+                "handtype": handtype}
+
+    def num_card_in_suit(self, hand, suit):
+        total = 0
+        for card in hand:
+            if self.get_suit(card) == suit:
+                total += 1
+        return total
+
+    def num_pair_in_suit(self, hand, suit):
+        total_pair = 0
+        for card in hand:
+            if self.get_suit(card) != suit:
+                continue
+            else:
+                for card2 in hand:
+                    if card == card2 and card is not card2:
+                        total_pair += 1
+        total_pair /= 2
+        return total_pair
+
+    def get_secondary_player_move(self, player, curhandinfo):
+        cursuit = curhandinfo['suit']
+        curhandtype = curhandinfo['handtype']
+        np_input = pim.get_player_input()
+        if not pim.is_valid_input(player, np_input):
+            return {"movecode": "invalid indeces"}
+        np_hand = player.get_hand()
+        npi_hand = []
+        for index in np_input:
+            npi_hand.append(np_hand[index])
+        if 
+
+
+
 
 
 
