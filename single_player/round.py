@@ -212,7 +212,7 @@ class Round(object):
         zhuang_jia_player = self.players[self.zhuang_jia_id]
         for card in self.deck.cards:
             zhuang_jia_player.draw(card)
-        print("Your hand after di pai:")
+        print(zhuang_jia_player.get_name() + ". Your hand after di pai:")
         zhuang_jia_player.print_hand()
         print("The trump suit is " + self.trump_suit)
         while len(self.discards) != 8:
@@ -227,7 +227,7 @@ class Round(object):
             self.discards.append(zhuang_jia_player.get_hand()[each_index])
         self.del_indexes(zhuang_jia_player, discard_indexes)
 
-            '''
+        '''
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
                   "a card from the discard to your hand")
             card_input = pim.get_player_input()
@@ -346,9 +346,10 @@ class Round(object):
         fp_hand = first_player.get_hand()
 
         #CHECK IF SELECtiON IS ONE SUIT
-        suit_set: set = {}
+        suit_list = []
         for each_index in fp_input:
-            suit_set.add(self.get_suit(first_player.get_hand()[each_index]))
+            suit_list.append(self.get_suit(first_player.get_hand()[each_index]))
+        suit_set = set(suit_list)
         if len(suit_set) != 1:
             return {"move_code": "suit_set error"}
 
@@ -365,10 +366,10 @@ class Round(object):
 
         # CHECK FOR LARGEST PAIR, THEN LARGEST SINGLE
         if len(fpi_hand) == 2:
-            fpi_response = self.return_pairs(fpi_hand)[0]
+            fpi_response = self.return_pairs(fpi_hand)
             hand_type.append('pair')
         elif len(fpi_hand) == 1:
-            fpi_response = self.return_singles(fpi_hand)[0]
+            fpi_response = self.return_singles(fpi_hand)
             hand_type.append('single')
         return {"move_code": "valid",
                 "index response": fp_input,
@@ -419,8 +420,8 @@ class Round(object):
             if not self.num_cards_in_suit(npi_hand, cur_suit) == min_pair:
                 return {'move_code': 'insufficient number of pairs'}
 
-        biggest_hand = cur_hand_info['biggest hand']
-        biggest_player = cur_hand_info['biggest player']
+        biggest_hand = cur_hand_info['biggest_hand']
+        biggest_player = cur_hand_info['biggest_player']
         if hand_size == 1:
             npi_response = self.return_singles(npi_hand)
             has_bigger_single = self.cmp_cards(npi_response[0], biggest_hand[0]) > 0
