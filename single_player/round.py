@@ -419,7 +419,7 @@ class Round(object):
             return {'move_code': 'insufficient number of current suit'}
         if min_singles == 2:
             min_pair = min(self.num_pairs_in_suit(np_hand, cur_suit), 1)
-            if not self.num_cards_in_suit(npi_hand, cur_suit) == min_pair:
+            if not self.num_pairs_in_suit(npi_hand, cur_suit) == min_pair:
                 return {'move_code': 'insufficient number of pairs'}
 
         biggest_hand = cur_hand_info['biggest_hand']

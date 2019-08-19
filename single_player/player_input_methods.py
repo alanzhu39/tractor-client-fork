@@ -28,12 +28,12 @@ def is_pair(card1, card2):
 
 
 def is_valid_input(player, response):
+    if len(set(response)) != len(response):
+        return False
     for each_index in response:
         if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
             return False
-        if len(set(response)) != len(response):
-            return False
-        return True
+    return True
 
 
 def is_trump(card, trumpinfo):
