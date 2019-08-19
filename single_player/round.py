@@ -194,11 +194,11 @@ class Round(object):
         for card in self.deck.cards:
             print(card)
             if card.is_big_joker or card.is_small_joker:
-                self.trump_suit == "none"
+                self.trump_suit = "none"
                 print("The game is now WuZhu")
                 return
             elif card.rank == self.trump_rank:
-                self.trump_suit == card.suit
+                self.trump_suit = card.suit
                 print("The trump suit is now %s" % card.suit)
                 return
             else:
