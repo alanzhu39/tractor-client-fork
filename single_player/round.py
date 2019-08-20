@@ -436,7 +436,7 @@ class Round(object):
 
         if hand_size == 2 and self.contains_pair(npi_hand):
             npi_response = self.return_pairs(npi_hand)
-            has_bigger_pair = self.pair_gt(npi_response[0], biggest_hand[0]) > 0
+            has_bigger_pair = self.pair_gt(npi_response[0], biggest_hand[0])
             return {'move_code': 'valid',
                     'index_response': np_input,
                     'npi_hand': npi_response,
@@ -501,6 +501,8 @@ class Round(object):
 
         if self.is_attacker(info_dict['biggest_player']):
             self.attacker_points += current_turn_points
+
+        print(info_dict['biggest_player'].get_name() + ' won the hand with ' + str(npi['biggest_hand'][0]))
 
         return {'trick_winner': self.players.index(info_dict['biggest_player']),
                 'num_cards': info_dict['size']}

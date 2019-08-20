@@ -40,11 +40,16 @@ class Card(object):
             return 'SJo'
         return self.rank + Card.suit_map[self.suit]
 
+    def __repr__(self):
+        return self.__str__()
+
     def __eq__(self, other):
         if self.is_big_joker and other.is_big_joker:
             return True
         if self.is_small_joker and other.is_small_joker:
             return True
+        if self.is_joker:
+            return False
         if self.rank == other.rank and self.suit == other.suit:
             return True
         return False
@@ -59,12 +64,13 @@ class Card(object):
         return True if self.is_joker else False
 
     def get_is_big_joker(self):
-        return True if self.is_big_joker else  False
+        return True if self.is_big_joker else False
 
     def get_is_small_joker(self):
         return True if self.is_small_joker else False
 
 class Pair(object):
+
     def __init__(self, card, suit):
         self.card = card
         self.suit = suit
@@ -74,6 +80,9 @@ class Pair(object):
 
     def get_suit(self):
         return self.suit
+
+    def __str__(self):
+        return 'pair ' + str(self.card)
 
 
 
