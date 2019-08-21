@@ -8,7 +8,15 @@ def get_player_input():
     integer_list = [s for s in response if s.isdigit()]
     return list(map(int, integer_list))
 
+def is_valid_input(player, response):
+    if len(set(response)) != len(response):
+        return False
+    for each_index in response:
+        if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
+            return False
+    return True
 
+'''
 def is_card(card_string):
     if len(card_string) == 3:
         if card_string == 'BJo' or card_string == 'SJo':
@@ -20,21 +28,6 @@ def is_card(card_string):
         suit = card_string[1]
         if (suit == 'c' or suit == 'd' or suit == 'h' or suit == 's') and card_string[0].isDigit():
             return True
-
-
-def is_pair(card1, card2):
-    if card1 == card2:
-        return True
-
-
-def is_valid_input(player, response):
-    if len(set(response)) != len(response):
-        return False
-    for each_index in response:
-        if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
-            return False
-    return True
-
 
 def is_trump(card, trumpinfo):
     if card.is_joker:
@@ -56,7 +49,7 @@ def hand_contains_pair_in_suit(hand, suit, trumpinfo):
                 return True
     return False
 
-
+#OUTDATED
 def num_cards_in_suit(hand, suit, trumpinfo):
     cnt = 0
     if suit == 'trump':
@@ -147,3 +140,4 @@ def get_valid_input(player, startplayer, trumpinfo, curSuit, curType, curNumCard
 
         else:
             return False, []
+'''

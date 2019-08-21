@@ -222,11 +222,10 @@ class Round(object):
                 continue
             else:
                 break
-        #ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
+        # ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
         for each_index in discard_indexes:
             self.discards.append(zhuang_jia_player.get_hand()[each_index])
         self.del_indexes(zhuang_jia_player, discard_indexes)
-
 
         '''
             print("Enter the card that you want to discard. Or, enter \'undo\' to return "
@@ -346,7 +345,7 @@ class Round(object):
             return {"move_code": "invalid indexes"}
         fp_hand = first_player.get_hand()
 
-        #CHECK IF SELECtiON IS ONE SUIT
+        # CHECK IF SELECtiON IS ONE SUIT
         suit_list = []
         for each_index in fp_input:
             suit_list.append(self.get_suit(first_player.get_hand()[each_index]))
@@ -464,7 +463,9 @@ class Round(object):
 
     def play_turn(self, sp_index):
         first_player = self.players[sp_index]
-        print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.')
+        print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
+                                                   ' Attacker current points: ' + str(self.attacker_points))
+
         first_player.print_hand()
         while True:
             fpi = self.get_first_player_move(first_player)
@@ -485,7 +486,9 @@ class Round(object):
         for i in range(sp_index + 1, sp_index + 4):
             cur_player_index = i % 4
             cur_player = self.players[cur_player_index]
-            print("Hello " + cur_player.get_name() + '. Please enter the cards you would like to play.')
+            print("Hello " + cur_player.get_name() + '. Please enter the cards you would like to play.'
+                                                     ' Attacker current points: ' + str(self.attacker_points) +
+                  ' Current turn points: ' + str(current_turn_points))
             cur_player.print_hand()
             while True:
                 npi = self.get_secondary_player_move(cur_player, info_dict)

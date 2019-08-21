@@ -58,9 +58,10 @@ class Player(object):
         return len(self.hand)
 
     def print_hand(self):
-        for card in self.hand:
-            print(card, end=' ')
-        print('')
+        for i in range(len(self.hand)):
+            print(str(i) + ':' + str(self.hand[i]), end=' ')
+        print()
+
 
     def draw(self, card):
         # draws a card and inserts into hand
