@@ -8,6 +8,7 @@ def get_player_input():
     integer_list = [s for s in response if s.isdigit()]
     return list(map(int, integer_list))
 
+
 def is_valid_input(player, response):
     if len(set(response)) != len(response):
         return False
