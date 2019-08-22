@@ -3,7 +3,15 @@ from time import sleep
 import socket
 from single_player.network import Network
 from single_player.round import *
+from single_player.player import *
 
+sheng_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+rank_ids = [0, 0, 0, 0]
+
+zj_id = 0
+players = [Player("Adam", sheng_order[0]), Player("Andrew", sheng_order[0]),
+           Player("Alan", sheng_order[0]), Player("Raymond", sheng_order[0])]
+players[zj_id].set_is_zhuang_jia(True)
 
 class TractorClient():
 
@@ -25,14 +33,13 @@ class TractorClient():
         self.initGraphics()
         self.net = Network()
         self.playerID = self.net.getID()
-        print(self.playerID)
         
     def drawBoard(self):
         # draws card on screen
         self.screen.blit(self.testCard, [0,0])
 
-    def drawSelfHand(self):
-        # draws your own hand
+    def drawHands(self):
+        # draws all hands with only your own showing
         pass
 
     def update(self):
