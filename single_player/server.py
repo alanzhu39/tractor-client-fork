@@ -15,7 +15,7 @@ try:
 except socket.error as e:
     print(str(e))
 
-s.listen(4)
+s.listen(2)
 print("Waiting for a connection")
 
 currentId = "0"
