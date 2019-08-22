@@ -1,11 +1,19 @@
 import pygame
 from time import sleep
 import socket
+from single_player.network import Network
+from single_player.round import *
+from single_player.player import *
 
-HOST = '192.168.1.35'  # The server's hostname or IP address
-PORT = 65432        # The port used by the server
+sheng_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+rank_ids = [0, 0, 0, 0]
 
-class TractorClient(ConnectionListener):
+zj_id = 0
+players = [Player("Adam", sheng_order[0]), Player("Andrew", sheng_order[0]),
+           Player("Alan", sheng_order[0]), Player("Raymond", sheng_order[0])]
+players[zj_id].set_is_zhuang_jia(True)
+
+class TractorClient():
 
     def initGraphics(self):
         # creates surface from uploaded card image
@@ -23,12 +31,17 @@ class TractorClient(ConnectionListener):
         # initialize pygame clock
         self.clock=pygame.time.Clock()
         self.initGraphics()
-        
+        self.net = Network()
+        self.playerID = self.net.getID()
         
     def drawBoard(self):
         # draws card on screen
         self.screen.blit(self.testCard, [0,0])
-        
+
+    def drawHands(self):
+        # draws all hands with only your own showing
+        pass
+
     def update(self):
         # make the game 60 fps
         self.clock.tick(60)
