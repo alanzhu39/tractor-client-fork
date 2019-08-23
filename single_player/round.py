@@ -509,3 +509,5 @@ class Round(object):
 
         return {'trick_winner': self.players.index(info_dict['biggest_player']),
                 'num_cards': info_dict['size']}
+    def get_players(self):
+        return self.players
