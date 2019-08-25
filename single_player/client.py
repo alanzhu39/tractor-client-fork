@@ -24,12 +24,10 @@ for rank in ranks:
     for s in suits:
         card_key = rank + suit_map[s]
         card_file = "cards_jpeg\\" + rank + s + ".jpg"
-        my_card = pygame.transform.scale(pygame.image.load(card_file),(90,140))
-        my_card.set_colorkey(pygame.Color(0,0,0))
-        deck_dict[card_key] = pygame.transform.scale(pygame.image.load(card_file),(90,140))
-deck_dict['BJo'] = pygame.transform.scale(pygame.image.load("cards_jpeg\\BJo.jpg"),(90,140))
-deck_dict['SJo'] = pygame.transform.scale(pygame.image.load("cards_jpeg\\SJo.jpg"),(90,140))
-print(deck_dict)
+        my_card = pygame.transform.scale(pygame.image.load(card_file),(100,155))
+        deck_dict[card_key] = my_card
+deck_dict['BJo'] = pygame.transform.scale(pygame.image.load("cards_jpeg\\BJo.jpg"),(100,155))
+deck_dict['SJo'] = pygame.transform.scale(pygame.image.load("cards_jpeg\\SJo.jpg"),(100,155))
 
 class TractorClient():
 
@@ -65,18 +63,18 @@ class TractorClient():
             for raw_card in player_hand_cards:
                 player_hand.append(str(raw_card))
             player_hands.append(player_hand)
-        user_hand = player_hands[self.playerID]
+        user_hand = player_hands[self.playerID % 4]
         right_hand = player_hands[(self.playerID + 1) % 4]
         across_hand = player_hands[(self.playerID + 2) % 4]
         left_hand = player_hands[(self.playerID + 3) % 4]
 
         # draws user's hand
-        left_coord = 450 - (20*(len(user_hand)-1)+90)/2
+        left_coord = 450 - (22*(len(user_hand)-1)+100)/2
         for card_index in range(len(user_hand)):
             if card_index < len(user_hand) - 1:
-                self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+20*(card_index), 460], area=pygame.Rect(0, 0, 20, 140), special_flags=0)
+                self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=pygame.Rect(0, 0, 22, 155), special_flags=0)
             else:
-                self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+20*(card_index), 460], area=None, special_flags=0)
+                self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=None, special_flags=0)
             card_index += 1
 
 
