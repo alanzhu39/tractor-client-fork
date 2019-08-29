@@ -15,7 +15,7 @@ from single_player.deck import *
 import single_player.player_input_methods as pim
 
 
-class Round(object):
+class testRound(object):
     """
     players = list of Player (size = 4) (list of Player object)
     zhuang_jia_id = ID of zhuang jia in players (int)
@@ -511,7 +511,6 @@ class Round(object):
 
         return {'trick_winner': self.players.index(info_dict['biggest_player']),
                 'num_cards': info_dict['size']}
-
     def get_players(self):
         return self.players
 

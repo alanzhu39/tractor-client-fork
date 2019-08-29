@@ -29,6 +29,9 @@ for rank in ranks:
 deck_dict['BJo'] = pygame.transform.scale(pygame.image.load("cards_jpeg\\BJo.jpg"),(100,155))
 deck_dict['SJo'] = pygame.transform.scale(pygame.image.load("cards_jpeg\\SJo.jpg"),(100,155))
 
+card_back_vert = pygame.transform.scale(pygame.image.load("cards_jpeg\\Red_back.jpg"),(65,100))
+card_back_hor = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("cards_jpeg\\Red_back.jpg"),(65,100)),90)
+
 class TractorClient():
 
     def initGraphics(self):
@@ -49,10 +52,11 @@ class TractorClient():
         self.net = Network()
         self.playerID = int(self.net.getID())
         
-    def drawBoard(self):
+    def draw_board(self):
+        self.draw_deck()
         self.drawHands()
 
-    def drawHands(self):
+    def draw_hands(self):
         pass
         # draws all hands with only your own showing
         # gets hands of all players
@@ -77,7 +81,39 @@ class TractorClient():
                 self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=None, special_flags=0)
             card_index += 1
 
+        # draws across hand
+        left_coord = 450 - (15*(len(across_hand))-1+65)/2
+        for card_index in range(len(across_hand)):
+            if card_index < len(across_hand) - 1:
+                self.screen.blit(card_back_vert, [left_coord + 15 * (card_index), 0],
+                             area=pygame.Rect(0, 0, 15, 100), special_flags=0)
+            else:
+                self.screen.blit(card_back_vert, [left_coord + 15 * (card_index), 0],
+                                 area=None, special_flags=0)
+            card_index += 1
 
+        # draws left hand
+        left_coord = 250 - (15*(len(left_hand))-1+65)/2
+        for card_index in range(len(left_hand)):
+            if card_index < len(left_hand) - 1:
+                self.screen.blit(card_back_hor, [0, left_coord + 15 * (card_index)],
+                             area=pygame.Rect(0, 0, 100, 15), special_flags=0)
+            else:
+                self.screen.blit(card_back_hor, [0, left_coord + 15 * (card_index)],
+                                 area=None, special_flags=0)
+            card_index += 1
+
+        # draws right hand
+        left_coord = 250 - (15 * (len(right_hand)) - 1 + 65) / 2
+        for card_index in range(len(right_hand)):
+            if card_index < len(right_hand) - 1:
+                self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=pygame.Rect(0, 0, 100, 15), special_flags=0)
+            else:
+                self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=None, special_flags=0)
+            card_index += 1
+
+    def draw_deck(self):
+        pass
 
     def update(self):
         # make the game 60 fps
@@ -87,7 +123,7 @@ class TractorClient():
         self.screen.fill(0)
 
         # draws board over cleared screen
-        self.drawBoard()
+        self.draw_board()
 
         for event in pygame.event.get():
             # quit if the quit button was pressed
