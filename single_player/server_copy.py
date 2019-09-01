@@ -21,6 +21,8 @@ try:
 except socket.error as e:
     print(str(e))
 
+s.listen()
+print("Waiting for a connection")
 
 sheng_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 rank_ids = [0, 0, 0, 0]
@@ -32,14 +34,15 @@ players[zj_id].set_is_zhuang_jia(True)
 
 r = testRound(players)
 
-
+client_conns = []
 
 def threaded_client(conn):
     global currentId, pos
-    conn.send(str.encode(currentId))
-    currentId = "1"
+    currentId = len(client_conns) - 1
+    conn.send(str.encode(str(currentId)))
     reply = ''
-    while True:
+    print("test")
+    while currentId != r.get_current_player():
         try:
             data = conn.recv(2048)
             reply = data.decode('utf-8')
@@ -48,25 +51,49 @@ def threaded_client(conn):
                 break
             else:
                 print("Recieved: " + reply)
-                arr = reply.split(":")
-                id = int(arr[0])
-                pos[id] = reply
-
-                if id == 0: nid = 1
-                if id == 1: nid = 0
-
-                reply = pos[nid][:]
+                reply = "x"
                 print("Sending: " + reply)
 
             conn.sendall(str.encode(reply))
         except:
             break
-
+    '''
     print("Connection Closed")
     conn.close()
+    '''
 
-while True:
+
+
+while len(client_conns) < 4:
     conn, addr = s.accept()
     print("Connected to: ", addr)
-
     start_new_thread(threaded_client, (conn,))
+    client_conns.append(conn)
+
+# run round
+
+'''
+data = client_conns[0].recv(2048)
+reply = data.decode('utf-8')
+if reply == 'x':
+    print("received x")
+else:
+    reply = "y"
+client_conns[0].sendall(str.encode(reply))
+
+
+def get_player_input(self):
+    # just player indexes, check if integerse
+    response = input().split()
+    integer_list = [s for s in response if s.isdigit()]
+    return list(map(int, integer_list))
+
+
+def is_valid_input(self, player, response):
+    if len(set(response)) != len(response):
+        return False
+    for each_index in response:
+        if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
+            return False
+    return True
+'''

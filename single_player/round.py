@@ -92,13 +92,11 @@ class Round(object):
             self.players[current_drawer].print_hand()
             # self.liang_query(current_drawer)
             current_drawer = (current_drawer + 1) % 4
-        """
         # no liang -> flip di pai
         if self.trump_suit == "none":
             self.flip_di_pai()
         # zhuang jia chooses 8 cards for di pai
         self.choose_di_pai()
-        """
 
     def liang_query(self, current_drawer):
         # format is "suit cnt" or "SJo 2" or "BJo 2"

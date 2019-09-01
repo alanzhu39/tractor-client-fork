@@ -12,8 +12,7 @@ dealing, compare cards, and playing
 from typing import Dict, Any
 
 from single_player.deck import *
-import single_player.player_input_methods as pim
-
+# import single_player.pim_copy as pim
 
 class testRound(object):
     """
@@ -47,6 +46,8 @@ class testRound(object):
         self.suit_played = "none"
         self.discards = []
         self.attacker_points = 0
+        self.current_player = self.zhuang_jia_id
+        self.cards_played = {0: [], 1: [], 2: [], 3: []}
         # assumes there is a zhuang jia
         print("Round starting: " + players[self.zhuang_jia_id].get_name()
               + " is zhuang jia and the trump rank is " + self.trump_rank)
@@ -62,6 +63,7 @@ class testRound(object):
             # todo need id of player starting next turn
             # assumes that play_turn return an info dictionary
             trick_winner = info['trick_winner']
+            self.current_player = trick_winner
             info = self.play_turn(trick_winner)
 
         # reveal di pai and add to attacker's points if necessary
@@ -92,13 +94,11 @@ class testRound(object):
             self.players[current_drawer].print_hand()
             # self.liang_query(current_drawer)
             current_drawer = (current_drawer + 1) % 4
-        """
         # no liang -> flip di pai
         if self.trump_suit == "none":
             self.flip_di_pai()
         # zhuang jia chooses 8 cards for di pai
         self.choose_di_pai()
-        """
 
     def liang_query(self, current_drawer):
         # format is "suit cnt" or "SJo 2" or "BJo 2"
@@ -211,16 +211,16 @@ class testRound(object):
         return
 
     def choose_di_pai(self):
-        zhuang_jia_player = self.players[self.zhuang_jia_id]
+        zhuang_jia_player = self.players[self.current_player]
         for card in self.deck.cards:
             zhuang_jia_player.draw(card)
         print(zhuang_jia_player.get_name() + ". Your hand after di pai:")
         zhuang_jia_player.print_hand()
         print("The trump suit is " + self.trump_suit)
         while len(self.discards) != 8:
-            print("Enter 8 indexes you want to discard:")
-            discard_indexes = pim.get_player_input()
-            if not pim.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
+            # print("Enter 8 indexes you want to discard:")
+            discard_indexes = self.get_player_input(self.current_player)
+            if not self.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
                 continue
             else:
                 break
@@ -340,10 +340,10 @@ class testRound(object):
         return total
 
     def get_first_player_move(self, first_player):
-        fp_input = pim.get_player_input()
+        fp_input = self.get_player_input(self.current_player)
 
         # Check if input is a list of valid indexes
-        if not pim.is_valid_input(first_player, fp_input):
+        if not self.is_valid_input(first_player, fp_input):
             return {"move_code": "invalid indexes"}
         fp_hand = first_player.get_hand()
 
@@ -404,8 +404,8 @@ class testRound(object):
         cur_suit = cur_hand_info['suit']
         hand_size = cur_hand_info['size']
         print("Current suit: " + cur_suit + ", current hand size: " + str(hand_size))
-        np_input = pim.get_player_input()
-        if not pim.is_valid_input(player, np_input):
+        np_input = self.get_player_input(self.current_player)
+        if not self.is_valid_input(player, np_input):
             return {"move_code": "invalid indexes"}
         if not hand_size == len(np_input):
             return {"move_code": "wrong number of cards"}
@@ -464,6 +464,7 @@ class testRound(object):
             del player.get_hand()[index]
 
     def play_turn(self, sp_index):
+        self.cards_played = {0: [], 1: [], 2: [], 3: []}
         first_player = self.players[sp_index]
         print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
                                                    ' Attacker current points: ' + str(self.attacker_points))
@@ -476,6 +477,8 @@ class testRound(object):
                 continue
             else:
                 break
+        for index in fpi['index_responses']:
+            self.cards_played[sp_index].append(first_player.get_hand[index])
         current_turn_points = 0
         current_turn_points += fpi['points']
         info_dict = {'suit': fpi['suit'],
@@ -486,6 +489,7 @@ class testRound(object):
         self.del_indexes(first_player, fpi['index_response'])
 
         for i in range(sp_index + 1, sp_index + 4):
+            self.current_player = i % 4
             cur_player_index = i % 4
             cur_player = self.players[cur_player_index]
             print("Hello " + cur_player.get_name() + '. Please enter the cards you would like to play.'
@@ -499,10 +503,13 @@ class testRound(object):
                     continue
                 else:
                     break
+            for index in npi['index_responses']:
+                self.cards_played[cur_player_index].append(cur_player.get_hand[index])
             info_dict['biggest_hand'] = npi['biggest_hand']
             info_dict['biggest_player'] = npi['biggest_player']
             current_turn_points += npi['points']
             self.del_indexes(self.players[cur_player_index], npi['index_response'])
+
 
         if self.is_attacker(info_dict['biggest_player']):
             self.attacker_points += current_turn_points
@@ -516,3 +523,44 @@ class testRound(object):
 
     def get_deck(self):
         return self.deck
+
+    def get_current_player(self):
+        return self.current_player
+
+    def get_player_input(self, curr_player):
+        # just player indexes, check if integerse
+        global client_conns
+        conn = client_conns[curr_player]
+        response = ''
+        while True:
+            try:
+                data = conn.recv(2048)
+                response = data.decode('utf-8')
+                if not data:
+                    conn.send(str.encode("Goodbye"))
+                    break
+                else:
+                    print("Recieved: " + response)
+                    response = self.create_data()
+                    print("Sending: " + response)
+
+                if self.is_valid_input(self.players[curr_player],response):
+                    conn.sendall(str.encode(response))
+                    self.current_player = 5
+                    break
+            except:
+                break
+
+        integer_list = [s for s in response if s.isdigit()]
+        return list(map(int, integer_list))
+
+    def is_valid_input(self, player, response):
+        if len(set(response)) != len(response):
+            return False
+        for each_index in response:
+            if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
+                return False
+        return True
+
+    def create_data(self):
+        data = ''

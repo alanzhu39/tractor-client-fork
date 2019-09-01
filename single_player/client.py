@@ -2,18 +2,6 @@ import pygame
 from time import sleep
 import socket
 from single_player.network import Network
-from single_player.round import *
-from single_player.player import *
-
-sheng_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-rank_ids = [0, 0, 0, 0]
-
-zj_id = 0
-players = [Player("Adam", sheng_order[0]), Player("Andrew", sheng_order[0]),
-           Player("Alan", sheng_order[0]), Player("Raymond", sheng_order[0])]
-players[zj_id].set_is_zhuang_jia(True)
-
-r = Round(players)
 
 # create dict of each card image
 deck_dict = {}
@@ -51,11 +39,11 @@ class TractorClient():
         self.initGraphics()
         self.net = Network()
         self.playerID = int(self.net.getID())
+        self.data = []
         
     def draw_board(self):
-        self.draw_deck()
-        self.drawHands()
-
+        pass
+    '''
     def draw_hands(self):
         pass
         # draws all hands with only your own showing
@@ -111,7 +99,7 @@ class TractorClient():
             else:
                 self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=None, special_flags=0)
             card_index += 1
-
+    '''
     def draw_deck(self):
         pass
 
@@ -122,18 +110,36 @@ class TractorClient():
         # clear the screen
         self.screen.fill(0)
 
+        reply = self.net.send("x")
+        print(reply)
+
         # draws board over cleared screen
         self.draw_board()
 
+        # take input
+        click = ''
         for event in pygame.event.get():
             # quit if the quit button was pressed
             if event.type == pygame.QUIT:
+                global client_conns
+                client_conns[self.playerID].close()
                 exit()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                click = event.pos
+
+        print(click)
 
         # update the screen
         pygame.display.flip()
 
+    def send_data(self):
+        data = "indices"
+        reply = self.net.send(data)
+        return reply
+
+    def click_index(self,position):
+        pass
+
 myClient = TractorClient()
-r.deal()
 while 1:
     myClient.update()
