@@ -12,6 +12,7 @@ dealing, compare cards, and playing
 from typing import Dict, Any
 
 from single_player.deck import *
+import single_player.connections as connections
 # import single_player.pim_copy as pim
 
 class testRound(object):
@@ -48,6 +49,8 @@ class testRound(object):
         self.attacker_points = 0
         self.current_player = self.zhuang_jia_id
         self.cards_played = {0: [], 1: [], 2: [], 3: []}
+        self.clear = False
+        self.di_pai = True
         # assumes there is a zhuang jia
         print("Round starting: " + players[self.zhuang_jia_id].get_name()
               + " is zhuang jia and the trump rank is " + self.trump_rank)
@@ -59,6 +62,7 @@ class testRound(object):
         # play out the turns
         # pass in trump info as a dictionary
         info = self.play_turn(self.zhuang_jia_id)
+        self.clear = True
         while len(self.players[0].get_hand()) > 0:
             # todo need id of player starting next turn
             # assumes that play_turn return an info dictionary
@@ -214,6 +218,7 @@ class testRound(object):
         zhuang_jia_player = self.players[self.current_player]
         for card in self.deck.cards:
             zhuang_jia_player.draw(card)
+        self.di_pai = False
         print(zhuang_jia_player.get_name() + ". Your hand after di pai:")
         zhuang_jia_player.print_hand()
         print("The trump suit is " + self.trump_suit)
@@ -227,6 +232,7 @@ class testRound(object):
         # ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
         for each_index in discard_indexes:
             self.discards.append(zhuang_jia_player.get_hand()[each_index])
+        self.di_pai = True
         self.del_indexes(zhuang_jia_player, discard_indexes)
 
         '''
@@ -529,23 +535,24 @@ class testRound(object):
 
     def get_player_input(self, curr_player):
         # just player indexes, check if integerse
-        global client_conns
-        conn = client_conns[curr_player]
+        conn = connections.get_conn(curr_player)
         response = ''
         while True:
             try:
                 data = conn.recv(2048)
                 response = data.decode('utf-8')
+                response = response.strip('[').strip(']')
+                response = [int(s) for s in response.split(',')]
                 if not data:
                     conn.send(str.encode("Goodbye"))
                     break
                 else:
                     print("Recieved: " + response)
-                    response = self.create_data()
+                    reply = self.get_data()
                     print("Sending: " + response)
 
                 if self.is_valid_input(self.players[curr_player],response):
-                    conn.sendall(str.encode(response))
+                    conn.sendall(str.encode(reply))
                     self.current_player = 5
                     break
             except:
@@ -562,5 +569,10 @@ class testRound(object):
                 return False
         return True
 
-    def create_data(self):
+    def get_data(self):
         data = ''
+        data += str(0) + ':' + str(self.players[0].get_hand()) + ':' + str(self.cards_played[0])
+        for i in range(3):
+            data += ':' + str(i+1) + ':' + str(self.players[i+1].get_hand()) + ':' + str(self.cards_played[i+1])
+        data += ':' + str(self.clear) + ':' + str(self.di_pai)
+        return data

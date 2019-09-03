@@ -131,6 +131,8 @@ class Deck(object):
         for s in self.cards:
             print(s)
 
+    def get_len(self):
+        return len(self.cards)
 
 SMALL_JOKER = Card('', '', 0, False, True)
 BIG_JOKER = Card('', '', 0, True, False)

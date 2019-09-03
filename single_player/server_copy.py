@@ -3,6 +3,7 @@ from _thread import *
 import sys
 from single_player.round_copy import *
 from single_player.player import *
+import single_player.connections as connections
 import selectors
 import types
 
@@ -34,14 +35,11 @@ players[zj_id].set_is_zhuang_jia(True)
 
 r = testRound(players)
 
-client_conns = []
-
 def threaded_client(conn):
     global currentId, pos
-    currentId = len(client_conns) - 1
+    currentId = connections.get_length() - 1
     conn.send(str.encode(str(currentId)))
     reply = ''
-    print("test")
     while currentId != r.get_current_player():
         try:
             data = conn.recv(2048)
@@ -51,7 +49,7 @@ def threaded_client(conn):
                 break
             else:
                 print("Recieved: " + reply)
-                reply = "x"
+                reply = r.get_data()
                 print("Sending: " + reply)
 
             conn.sendall(str.encode(reply))
@@ -62,15 +60,13 @@ def threaded_client(conn):
     conn.close()
     '''
 
-
-
-while len(client_conns) < 4:
+while connections.get_length() < 4:
     conn, addr = s.accept()
     print("Connected to: ", addr)
     start_new_thread(threaded_client, (conn,))
-    client_conns.append(conn)
+    connections.add_conn(conn)
 
-# run round
+r.run()
 
 '''
 data = client_conns[0].recv(2048)
