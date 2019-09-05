@@ -1,5 +1,5 @@
 import pygame
-import single_player.connections as connections
+import single_player.round_copy as myConns
 from time import sleep
 import socket
 from single_player.network import Network
@@ -40,13 +40,13 @@ class TractorClient():
 
         # initialize the screen
         self.screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption("Tractor")
 
         # initialize pygame clock
         self.clock=pygame.time.Clock()
         self.initGraphics()
         self.net = Network()
         self.playerID = int(self.net.getID())
+        pygame.display.set_caption("Client " + str(self.playerID))
         self.data = None
         self.card_indices = []
 
@@ -74,96 +74,97 @@ class TractorClient():
         across_played = played_cards[(self.playerID + 2) % 4]
         left_played = played_cards[(self.playerID + 3) % 4]
 
-        # draws user's hand
-        left_coord = 450 - (22*(len(user_hand)-1)+100)/2
-        for card_index in range(len(user_hand)):
-            if card_index < len(user_hand) - 1:
-                self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=pygame.Rect(0, 0, 22, 155), special_flags=0)
-            else:
-                self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=None, special_flags=0)
-            card_index += 1
-
-        # draws across hand
-        left_coord = 450 - (15*(len(across_hand))-1+65)/2
-        for card_index in range(len(across_hand)):
-            if card_index < len(across_hand) - 1:
-                self.screen.blit(card_back_vert, [left_coord + 15 * (card_index), 0],
-                             area=pygame.Rect(0, 0, 15, 100), special_flags=0)
-            else:
-                self.screen.blit(card_back_vert, [left_coord + 15 * (card_index), 0],
-                                 area=None, special_flags=0)
-            card_index += 1
-
-        # draws left hand
-        left_coord = 250 - (15*(len(left_hand))-1+65)/2
-        for card_index in range(len(left_hand)):
-            if card_index < len(left_hand) - 1:
-                self.screen.blit(card_back_hor, [0, left_coord + 15 * (card_index)],
-                             area=pygame.Rect(0, 0, 100, 15), special_flags=0)
-            else:
-                self.screen.blit(card_back_hor, [0, left_coord + 15 * (card_index)],
-                                 area=None, special_flags=0)
-            card_index += 1
-
-        # draws right hand
-        left_coord = 250 - (15 * (len(right_hand)) - 1 + 65) / 2
-        for card_index in range(len(right_hand)):
-            if card_index < len(right_hand) - 1:
-                self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=pygame.Rect(0, 0, 100, 15), special_flags=0)
-            else:
-                self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=None, special_flags=0)
-            card_index += 1
-
-        # draw played cards
-        # draws user's played cards
-        left_coord = 450 - (15 * (len(user_played) - 1) + 100) / 2
-        for card_index in range(len(user_played)):
-            if card_index < len(user_played) - 1:
-                self.screen.blit(small_deck_dict[user_played[card_index]], [left_coord + 15 * (card_index), 338],
+        if len(user_hand) > 0:
+            # draws user's hand
+            left_coord = 450 - (22*(len(user_hand)-1)+100)/2
+            for card_index in range(len(user_hand)):
+                if card_index < len(user_hand) - 1:
+                    self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=pygame.Rect(0, 0, 22, 155), special_flags=0)
+                else:
+                    self.screen.blit(deck_dict[user_hand[card_index]], [left_coord+22*(card_index), 445], area=None, special_flags=0)
+                card_index += 1
+        if len(across_hand) > 0:
+            # draws across hand
+            left_coord = 450 - (15*(len(across_hand))-1+65)/2
+            for card_index in range(len(across_hand)):
+                if card_index < len(across_hand) - 1:
+                    self.screen.blit(card_back_vert, [left_coord + 15 * (card_index), 0],
                                  area=pygame.Rect(0, 0, 15, 100), special_flags=0)
-            else:
-                self.screen.blit(small_deck_dict[user_played[card_index]], [left_coord + 15 * (card_index), 338], area=None,
-                                 special_flags=0)
-            card_index += 1
-
-        # draws across player's played cards
-        left_coord = 450 - (15 * (len(across_played)) - 1 + 65) / 2
-        for card_index in range(len(across_played)):
-            if card_index < len(across_played) - 1:
-                self.screen.blit(small_deck_dict[across_played[card_index]], [left_coord + 15 * (card_index), 107],
-                                 area=pygame.Rect(0, 0, 15, 100), special_flags=0)
-            else:
-                self.screen.blit(small_deck_dict[across_played[card_index]], [left_coord + 15 * (card_index), 107],
-                                 area=None, special_flags=0)
-            card_index += 1
-
-        # draws left player's played cards
-        left_coord = 108
-        for card_index in range(len(left_played)):
-            if card_index < len(left_played) - 1:
-                self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 222],
-                                 area=pygame.Rect(0, 0, 15, 100), special_flags=0)
-            else:
-                self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 107],
-                                 area=None, special_flags=0)
-            card_index += 1
-
-        # draws right player's played cards
-        left_coord = 792 - (15 * (len(right_played)) - 1 + 65)
-        for card_index in range(len(right_played)):
-            if card_index < len(right_played) - 1:
-                self.screen.blit(small_deck_dict[right_played[card_index]], [left_coord + 15 * (card_index), 222],
-                                 area=pygame.Rect(0, 0, 15, 100), special_flags=0)
-            else:
-                self.screen.blit(small_deck_dict[right_played[card_index]], [left_coord + 15 * (card_index), 222], area=None, special_flags=0)
-            card_index += 1
+                else:
+                    self.screen.blit(card_back_vert, [left_coord + 15 * (card_index), 0],
+                                     area=None, special_flags=0)
+                card_index += 1
+        if len(left_hand) > 0:
+            # draws left hand
+            left_coord = 250 - (15*(len(left_hand))-1+65)/2
+            for card_index in range(len(left_hand)):
+                if card_index < len(left_hand) - 1:
+                    self.screen.blit(card_back_hor, [0, left_coord + 15 * (card_index)],
+                                 area=pygame.Rect(0, 0, 100, 15), special_flags=0)
+                else:
+                    self.screen.blit(card_back_hor, [0, left_coord + 15 * (card_index)],
+                                     area=None, special_flags=0)
+                card_index += 1
+        if len(right_hand) > 0:
+            # draws right hand
+            left_coord = 250 - (15 * (len(right_hand)) - 1 + 65) / 2
+            for card_index in range(len(right_hand)):
+                if card_index < len(right_hand) - 1:
+                    self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=pygame.Rect(0, 0, 100, 15), special_flags=0)
+                else:
+                    self.screen.blit(card_back_hor, [800, left_coord + 15 * (card_index)], area=None, special_flags=0)
+                card_index += 1
+        if len(user_played) > 0:
+            # draw played cards
+            # draws user's played cards
+            left_coord = 450 - (15 * (len(user_played) - 1) + 100) / 2
+            for card_index in range(len(user_played)):
+                if card_index < len(user_played) - 1:
+                    self.screen.blit(small_deck_dict[user_played[card_index]], [left_coord + 15 * (card_index), 338],
+                                     area=pygame.Rect(0, 0, 15, 100), special_flags=0)
+                else:
+                    self.screen.blit(small_deck_dict[user_played[card_index]], [left_coord + 15 * (card_index), 338], area=None,
+                                     special_flags=0)
+                card_index += 1
+        if len(across_played) > 0:
+            # draws across player's played cards
+            left_coord = 450 - (15 * (len(across_played)) - 1 + 65) / 2
+            for card_index in range(len(across_played)):
+                if card_index < len(across_played) - 1:
+                    self.screen.blit(small_deck_dict[across_played[card_index]], [left_coord + 15 * (card_index), 107],
+                                     area=pygame.Rect(0, 0, 15, 100), special_flags=0)
+                else:
+                    self.screen.blit(small_deck_dict[across_played[card_index]], [left_coord + 15 * (card_index), 107],
+                                     area=None, special_flags=0)
+                card_index += 1
+        if len(left_played) > 0:
+            # draws left player's played cards
+            left_coord = 108
+            for card_index in range(len(left_played)):
+                if card_index < len(left_played) - 1:
+                    self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 222],
+                                     area=pygame.Rect(0, 0, 15, 100), special_flags=0)
+                else:
+                    self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 107],
+                                     area=None, special_flags=0)
+                card_index += 1
+        if len(right_played) > 0:
+            # draws right player's played cards
+            left_coord = 792 - (15 * (len(right_played)) - 1 + 65)
+            for card_index in range(len(right_played)):
+                if card_index < len(right_played) - 1:
+                    self.screen.blit(small_deck_dict[right_played[card_index]], [left_coord + 15 * (card_index), 222],
+                                     area=pygame.Rect(0, 0, 15, 100), special_flags=0)
+                else:
+                    self.screen.blit(small_deck_dict[right_played[card_index]], [left_coord + 15 * (card_index), 222], area=None, special_flags=0)
+                card_index += 1
 
     def draw_deck(self):
-        if self.data[13]:
+        if self.data[13] == 'True':
             self.screen.blit(card_back_vert, [35,481])
 
     def draw_cleared(self):
-        if self.data[12]:
+        if self.data[12] == 'True':
             self.screen.blit(card_back_vert, [417,222])
 
     def draw_buttons(self):
@@ -185,8 +186,7 @@ class TractorClient():
         for event in pygame.event.get():
             # quit if the quit button was pressed
             if event.type == pygame.QUIT:
-                global client_conns
-                client_conns[self.playerID].close()
+                myConns.connections[self.playerID].close()
                 exit()
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = event.pos
@@ -199,23 +199,31 @@ class TractorClient():
 
     def send_data(self, position):
         reply = None
-        if position[1] >= 745 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[
+        if not position:
+            reply = self.net.send('x')
+        elif position[1] >= 745 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[
             0] < 450 + (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2:
+            # card click
             click_index = position[0] - (450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2) % 22
             self.card_indices.append(click_index)
+            print(self.card_indices)
             reply = self.net.send(self.card_indices)
         elif 772 <= position[0] <= 892 and 465 <= position[1] <= 530:
+            # play button press
             reply = self.net.send(self.card_indices)
             self.card_indices.clear()
         elif 772 <= position[0] <= 892 and 532 <= position[1] <= 597:
+            # clear button press
             self.card_indices.clear()
             reply = self.net.send(self.card_indices)
+        else:
+            reply = self.net.send('x')
         return reply
 
     def parse_data(self, response):
         if not response:
             return self.data
-        data = [0,None,None,1,None,None,2,None,None,3,None,None,None,None]
+        data = [0,None,None,1,None,None,2,None,None,3,None,None,None,None,None]
         split_data = response.split(':')
         data[1] = self.make_list(split_data[1])
         data[2] = self.make_list(split_data[2])
@@ -227,11 +235,12 @@ class TractorClient():
         data[11] = self.make_list(split_data[11])
         data[12] = str(split_data[12])
         data[13] = str(split_data[13])
+        data[14] = str(split_data[14])
         return data
 
     def make_list(self, list_in):
         list_out = list_in.strip('[').strip(']')
-        list_out = [int(s) for s in list_out.split(',')]
+        list_out = [s.strip() for s in list_out.split(',') if s != '']
         return list_out
 
     def get_data(self):
@@ -241,8 +250,25 @@ class TractorClient():
         self.data = data
 
 myClient = TractorClient()
+'''
+while True:
+    for event in pygame.event.get():
+        # quit if the quit button was pressed
+        if event.type == pygame.QUIT:
+            exit()
+    if not myClient.get_data():
+        myClient.set_data(myClient.parse_data(myClient.send_data((0,0))))
+        continue
+    break
+print('starting game')
+'''
 while 1:
-    if connections.get_length() == 4:
-        if not myClient.get_data():
-            myClient.set_data(myClient.parse_data(myClient.send_data('1')))
+    if myClient.get_data() and myClient.get_data()[14] == "True":
         myClient.update()
+    else:
+        for event in pygame.event.get():
+            # quit if the quit button was pressed
+            if event.type == pygame.QUIT:
+                exit()
+        myClient.set_data(myClient.parse_data(myClient.send_data((0,0))))
+

@@ -2,8 +2,8 @@ import socket
 from _thread import *
 import sys
 from single_player.round_copy import *
+import single_player.round_copy as myConns
 from single_player.player import *
-import single_player.connections as connections
 import selectors
 import types
 
@@ -37,7 +37,7 @@ r = testRound(players)
 
 def threaded_client(conn):
     global currentId, pos
-    currentId = connections.get_length() - 1
+    currentId = len(myConns.connections) - 1
     conn.send(str.encode(str(currentId)))
     reply = ''
     while currentId != r.get_current_player():
@@ -51,7 +51,6 @@ def threaded_client(conn):
                 print("Recieved: " + reply)
                 reply = r.get_data()
                 print("Sending: " + reply)
-
             conn.sendall(str.encode(reply))
         except:
             break
@@ -60,11 +59,11 @@ def threaded_client(conn):
     conn.close()
     '''
 
-while connections.get_length() < 4:
+while len(myConns.connections) < 4:
     conn, addr = s.accept()
     print("Connected to: ", addr)
     start_new_thread(threaded_client, (conn,))
-    connections.add_conn(conn)
+    myConns.connections.append(conn)
 
 r.play_round()
 

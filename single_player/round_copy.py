@@ -12,8 +12,9 @@ dealing, compare cards, and playing
 from typing import Dict, Any
 
 from single_player.deck import *
-import single_player.connections as connections
 # import single_player.pim_copy as pim
+
+connections = []
 
 class testRound(object):
     """
@@ -28,7 +29,7 @@ class testRound(object):
     attacker_points = # points attackers collected
     """
     num_di_pai = 8
-
+    global connections
     def __init__(self, players):
         self.deck = Deck()
         assert (len(players) == 4)
@@ -47,16 +48,18 @@ class testRound(object):
         self.suit_played = "none"
         self.discards = []
         self.attacker_points = 0
-        self.current_player = self.zhuang_jia_id
+        self.current_player = 5
         self.cards_played = {0: [], 1: [], 2: [], 3: []}
         self.clear = False
         self.di_pai = True
+        self.game_start = False
         # assumes there is a zhuang jia
         print("Round starting: " + players[self.zhuang_jia_id].get_name()
               + " is zhuang jia and the trump rank is " + self.trump_rank)
 
     # returns number of points attackers earned
     def play_round(self):
+        self.game_start = True
         self.deal()
         # todo implement trump ranking (depends on trump rank and trump suit)
         # play out the turns
@@ -215,6 +218,7 @@ class testRound(object):
         return
 
     def choose_di_pai(self):
+        self.current_player = self.zhuang_jia_id
         zhuang_jia_player = self.players[self.current_player]
         for card in self.deck.cards:
             zhuang_jia_player.draw(card)
@@ -535,7 +539,7 @@ class testRound(object):
 
     def get_player_input(self, curr_player):
         # just player indexes, check if integerse
-        conn = connections.get_conn(curr_player)
+        conn = connections[curr_player]
         response = ''
         while True:
             try:
@@ -574,5 +578,5 @@ class testRound(object):
         data += str(0) + ':' + str(self.players[0].get_hand()) + ':' + str(self.cards_played[0])
         for i in range(3):
             data += ':' + str(i+1) + ':' + str(self.players[i+1].get_hand()) + ':' + str(self.cards_played[i+1])
-        data += ':' + str(self.clear) + ':' + str(self.di_pai)
+        data += ':' + str(self.clear) + ':' + str(self.di_pai) + ':' + str(self.game_start)
         return data
