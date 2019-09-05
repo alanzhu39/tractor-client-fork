@@ -549,7 +549,7 @@ class testRound(object):
                 else:
                     print("Recieved: " + response)
                     reply = self.get_data()
-                    print("Sending: " + response)
+                    print("Sending: " + reply)
 
                 if self.is_valid_input(self.players[curr_player],response):
                     conn.sendall(str.encode(reply))

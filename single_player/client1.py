@@ -241,10 +241,6 @@ class TractorClient():
         self.data = data
 
 myClient = TractorClient()
-if connections.get_length() == 4:
-    if not myClient.get_data():
-        myClient.set_data(myClient.parse_data(myClient.send_data('1')))
-        run = True
 while 1:
     if connections.get_length() == 4:
         if not myClient.get_data():

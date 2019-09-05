@@ -66,7 +66,7 @@ while connections.get_length() < 4:
     start_new_thread(threaded_client, (conn,))
     connections.add_conn(conn)
 
-r.run()
+r.play_round()
 
 '''
 data = client_conns[0].recv(2048)
