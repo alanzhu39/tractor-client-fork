@@ -40,17 +40,20 @@ def threaded_client(conn):
     currentId = len(myConns.connections) - 1
     conn.send(str.encode(str(currentId)))
     reply = ''
-    while currentId != r.get_current_player():
+    while True:
         try:
             data = conn.recv(2048)
             reply = data.decode('utf-8')
+            if currentId == r.get_current_player() == 0:
+                print(reply)
+                response = reply.strip('[').strip(']')
+                response = [int(s) for s in response.split(',').strip() if s != '']
+                r.set_client_input(response)
             if not data:
                 conn.send(str.encode("Goodbye"))
                 break
             else:
-                print("Recieved: " + reply)
                 reply = r.get_data()
-                print("Sending: " + reply)
             conn.sendall(str.encode(reply))
         except:
             break

@@ -53,6 +53,7 @@ class testRound(object):
         self.clear = False
         self.di_pai = True
         self.game_start = False
+        self.client_input = ''
         # assumes there is a zhuang jia
         print("Round starting: " + players[self.zhuang_jia_id].get_name()
               + " is zhuang jia and the trump rank is " + self.trump_rank)
@@ -218,8 +219,7 @@ class testRound(object):
         return
 
     def choose_di_pai(self):
-        self.current_player = self.zhuang_jia_id
-        zhuang_jia_player = self.players[self.current_player]
+        zhuang_jia_player = self.players[self.zhuang_jia_id]
         for card in self.deck.cards:
             zhuang_jia_player.draw(card)
         self.di_pai = False
@@ -227,8 +227,8 @@ class testRound(object):
         zhuang_jia_player.print_hand()
         print("The trump suit is " + self.trump_suit)
         while len(self.discards) != 8:
-            # print("Enter 8 indexes you want to discard:")
-            discard_indexes = self.get_player_input(self.current_player)
+            print("Enter 8 indexes you want to discard:")
+            discard_indexes = self.get_player_input(self.zhuang_jia_id)
             if not self.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
                 continue
             else:
@@ -539,28 +539,9 @@ class testRound(object):
 
     def get_player_input(self, curr_player):
         # just player indexes, check if integerse
-        conn = connections[curr_player]
-        response = ''
-        while True:
-            try:
-                data = conn.recv(2048)
-                response = data.decode('utf-8')
-                response = response.strip('[').strip(']')
-                response = [int(s) for s in response.split(',')]
-                if not data:
-                    conn.send(str.encode("Goodbye"))
-                    break
-                else:
-                    print("Recieved: " + response)
-                    reply = self.get_data()
-                    print("Sending: " + reply)
-
-                if self.is_valid_input(self.players[curr_player],response):
-                    conn.sendall(str.encode(reply))
-                    self.current_player = 5
-                    break
-            except:
-                break
+        self.current_player = curr_player
+        response = self.client_input
+        self.current_player = 5
 
         integer_list = [s for s in response if s.isdigit()]
         return list(map(int, integer_list))
@@ -571,6 +552,7 @@ class testRound(object):
         for each_index in response:
             if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
                 return False
+        self.client_input = ''
         return True
 
     def get_data(self):
@@ -580,3 +562,6 @@ class testRound(object):
             data += ':' + str(i+1) + ':' + str(self.players[i+1].get_hand()) + ':' + str(self.cards_played[i+1])
         data += ':' + str(self.clear) + ':' + str(self.di_pai) + ':' + str(self.game_start)
         return data
+
+    def set_client_input(self, input):
+        self.client_input = input

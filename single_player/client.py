@@ -191,31 +191,34 @@ class TractorClient():
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = event.pos
 
-        if not click:
-            self.data = self.parse_data(self.send_data(click))
+        self.data = self.parse_data(self.send_data(click))
 
         # update the screen
         pygame.display.flip()
 
     def send_data(self, position):
+        if position:
+            print(position)
         reply = None
         if not position:
             reply = self.net.send('x')
-        elif position[1] >= 745 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[
+        elif position[1] >= 445 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[
             0] < 450 + (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2:
             # card click
             click_index = position[0] - (450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2) % 22
             self.card_indices.append(click_index)
-            print(self.card_indices)
-            reply = self.net.send(self.card_indices)
+            print('appended')
+            reply = self.net.send(str(self.card_indices))
         elif 772 <= position[0] <= 892 and 465 <= position[1] <= 530:
             # play button press
-            reply = self.net.send(self.card_indices)
+            reply = self.net.send(str(self.card_indices))
+            print('play')
             self.card_indices.clear()
         elif 772 <= position[0] <= 892 and 532 <= position[1] <= 597:
             # clear button press
             self.card_indices.clear()
-            reply = self.net.send(self.card_indices)
+            print('clear')
+            reply = self.net.send('x')
         else:
             reply = self.net.send('x')
         return reply
