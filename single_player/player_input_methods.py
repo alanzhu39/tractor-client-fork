@@ -3,7 +3,7 @@ from single_player.deck import Card
 
 
 def get_player_input():
-    # just player indexes, check if integerse
+    # just player indexes, check if integers
     response = input().split()
     integer_list = [s for s in response if s.isdigit()]
     return list(map(int, integer_list))
