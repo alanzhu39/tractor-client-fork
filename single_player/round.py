@@ -502,9 +502,15 @@ class Round(object):
 
             if not not_a_tractor:
                 found_tractor = True
-                break
-                
+                return True
 
+        return False
+
+    def tractor_gt(self, tractor1, tractor2):
+        if tractor1.get_highest_value() > tractor2.get_highest_value():
+            return True
+        else:
+            return False
 
     def get_secondary_player_move(self, player, cur_hand_info):
         cur_suit = cur_hand_info['suit']
@@ -528,6 +534,18 @@ class Round(object):
             min_pair = min(self.num_pairs_in_suit(np_hand, cur_suit), 1)
             if not self.num_pairs_in_suit(npi_hand, cur_suit) == min_pair:
                 return {'move_code': 'insufficient number of pairs'}
+        if min_singles > 2:
+            tractor_length = hand_size // 2
+            min_pair = min(tractor_length, self.num_pairs_in_suit(np_hand, cur_suit))
+            if not self.num_pairs_in_suit(npi_hand, cur_suit) == min_pair:
+                return {'move_code': 'insufficient number of pairs'}
+            for i in range(tractor_length, 1, -1):
+                if self.contains_tractor_of_length_in_suit(np_hand, tractor_length, cur_suit):
+                    if not self.contains_tractor_of_length_in_suit(npi_hand, tractor_length, cur_suit):
+                        return{'move_code': 'insufficient number of tractors of length ' + str(tractor_length)}
+                    else:
+                        break #Stops checking if they have played a tractor or not if their largest tractor is already played
+
 
         biggest_hand = cur_hand_info['biggest_hand']
         biggest_player = cur_hand_info['biggest_player']
@@ -551,14 +569,24 @@ class Round(object):
                     'biggest_player': player if has_bigger_pair else biggest_player,
                     'points': self.get_num_points(npi_hand)}
 
-        else:
-            npi_response = self.return_singles(npi_hand)
-            return {'move_code': 'valid',
-                    'index_response': np_input,
-                    'npi_hand': npi_response,
-                    'biggest_hand': biggest_hand,
-                    'biggest_player': biggest_player,
-                    'points': self.get_num_points(npi_hand)}
+        if hand_size > 2: #TRACTOR ANALYSIS
+            if self.contains_tractor_of_length_in_suit(npi_hand, tractor_length, cur_suit) or self.contains_tractor_of_length_in_suit(npi_hand, tractor_length, 'trump'):
+                our_tractor = self.return_tractors(npi_hand)
+                their_tractor = biggest_hand[0]
+                has_bigger_tractor = self.tractor_gt(our_tractor, their_tractor)
+                return{'move_code': 'valid',
+                        'index_response': np_input,
+                        'npi_hand': [our_tractor] if has_bigger_tractor else biggest_hand,
+                        'biggest_hand': player if has_bigger_tractor else biggest_player,
+                       'points': self.get_num_points(npi_hand)}
+
+        npi_response = self.return_singles(npi_hand)
+        return {'move_code': 'valid',
+                'index_response': np_input,
+                'npi_hand': npi_response,
+                'biggest_hand': biggest_hand,
+                'biggest_player': biggest_player,
+                'points': self.get_num_points(npi_hand)}
 
     def is_attacker(self, player):
         if player is self.players[self.zhuang_jia_id] or player is self.players[(self.zhuang_jia_id + 2) % 4]:
