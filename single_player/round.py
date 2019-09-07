@@ -371,7 +371,7 @@ class Round(object):
 
     def is_valid_fpi(self, hand):
         if len(hand) > 2 and len(hand) % 2 == 0:
-            if self.contains_tractor_of_length(hand, len(hand) / 2):
+            if self.contains_tractor_of_length(hand, len(hand) // 2):
                 return True
         if len(hand) == 2:
             if self.contains_pair(hand) == 1:
@@ -383,7 +383,17 @@ class Round(object):
 
     # ASSUMES ALL CARDS ARE IN SAME SuIT
     def return_tractors(self, hand):
-        list_tractor = []
+        '''
+        Should be a tractor at this point, just need to return in tractor format
+        :param hand:
+        :return:
+        '''
+        maxval = 0
+        for card in hand:
+            maxval = max(self.card_value(card), maxval)
+        len_tractor = len(hand) // 2
+        return Tractor(maxval, len_tractor)
+
 
 
     def return_pairs(self, hand):
@@ -438,7 +448,8 @@ class Round(object):
 
         # CHECK FOR LARGEST TRACTOR, LARGEST PAIR, THEN LARGEST SINGLE
         if len(fpi_hand) > 2: #Should be a valid tractor at this point
-
+            fpi_response = [self.return_tractors(fpi_hand)]
+            hand_type.append("tractor" + str(len(fpi_hand) // 2))
         if len(fpi_hand) == 2:
             fpi_response = self.return_pairs(fpi_hand)
             hand_type.append('pair')
@@ -471,6 +482,29 @@ class Round(object):
                         total_pair += 1
         total_pair /= 2
         return total_pair
+
+    def contains_tractor_of_length_in_suit(self, hand, length, suit):
+        card_value_list = []
+        for card in hand:
+            if self.get_suit(card) == suit:
+                card_value_list.append(self.card_value(card))
+        card_value_list.sort()
+        if len(card_value_list) < 2 * length:
+            return False
+        found_tractor = False
+        for starting_index in range(len(card_value_list) - 2 * length + 1):
+            not_a_tractor = False
+            for i in range(starting_index, starting_index + 2 * length):
+                if not_a_tractor:
+                    break
+                if card_value_list[i] - card_value_list[starting_index] != i % 2 - starting_index:
+                    not_a_tractor = True
+
+            if not not_a_tractor:
+                found_tractor = True
+                break
+                
+
 
     def get_secondary_player_move(self, player, cur_hand_info):
         cur_suit = cur_hand_info['suit']

@@ -89,18 +89,11 @@ class Tractor(object):
         self.high_card_value = highest_card_value
         self.length = length
 
+    def get_highest_value(self):
+        return self.high_card_value
 
-
-
-
-
-class Tractor(object):
-    # as of now, the list of cards contains both cards in each pair
-    def __init__(self, cards):
-        self.cards = cards[:]
-        for card in cards:
-            self.point_value += card.point_value
-
+    def get_tractor_length(self):
+        return self.length
 
 class Deck(object):
     def __init__(self):
