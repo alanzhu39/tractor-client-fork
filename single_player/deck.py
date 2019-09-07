@@ -84,6 +84,10 @@ class Pair(object):
     def __str__(self):
         return 'pair ' + str(self.card)
 
+class Tractor(object):
+    def __init__(self, highest_card_value, length):
+        self.high_card_value = highest_card_value
+        self.length = length
 
 
 

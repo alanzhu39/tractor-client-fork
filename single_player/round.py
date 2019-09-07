@@ -343,12 +343,36 @@ class Round(object):
         return num_pairs
 
     def contains_tractor_of_length(self, hand, length_tractor):
+        """
+        This checks if the first player's move is a valid tractor.
+        we find the value of each card in the play and add it to a list
+        This list is then sorted
+        If it is a tractor, it should look something similar to
+        (1) [3, 3, 4, 4, 5, 5] etc.
+        Since it is already the same suit, we just need to check that we have this type of sequence
+        :param hand: the list of cards first player wants to play
+        :param length_tractor: the number of pairs in the tractor (min: 2)
+        :return:
+        """
         assert length_tractor >= 2, 'contains_tractor_of_length function invalid variable'
         assert len(hand) % 2 == 0, 'hand contains odd number of cards in contains_tractor_of_length'
+        assert len(hand) == 2 * length_tractor
+        card_value_list = []
+        for card in hand:
+            card_value_list.append(self.card_value(card))
+        card_value_list.sort()
 
+        assert len(hand) == len(card_value_list), 'contains_tractor_of_length error'
+        for i in range(len(card_value_list)):
+            if card_value_list[i] - card_value_list[0] != i % 2:
+                return False
+        #At this point, should satisfy the format (1) in the documentation
+        return True
 
     def is_valid_fpi(self, hand):
-
+        if len(hand) > 2 and len(hand) % 2 == 0:
+            if self.contains_tractor_of_length(hand, len(hand) / 2):
+                return True
         if len(hand) == 2:
             if self.contains_pair(hand) == 1:
                 return True
@@ -358,6 +382,10 @@ class Round(object):
             return False
 
     # ASSUMES ALL CARDS ARE IN SAME SuIT
+    def return_tractors(self, hand):
+        list_tractor = []
+
+
     def return_pairs(self, hand):
         list_pair = []
         for card in hand:
@@ -408,7 +436,9 @@ class Round(object):
         if not self.is_valid_fpi(fpi_hand):
             return {"move_code": "invalid move"}
 
-        # CHECK FOR LARGEST PAIR, THEN LARGEST SINGLE
+        # CHECK FOR LARGEST TRACTOR, LARGEST PAIR, THEN LARGEST SINGLE
+        if len(fpi_hand) > 2: #Should be a valid tractor at this point
+
         if len(fpi_hand) == 2:
             fpi_response = self.return_pairs(fpi_hand)
             hand_type.append('pair')
