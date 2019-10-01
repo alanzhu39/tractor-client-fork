@@ -36,7 +36,7 @@ players[zj_id].set_is_zhuang_jia(True)
 r = testRound(players)
 
 def threaded_client(conn):
-    global currentId, pos
+    # global currentId, pos
     currentId = len(myConns.connections) - 1
     conn.send(str.encode(str(currentId)))
     reply = ''
@@ -44,11 +44,14 @@ def threaded_client(conn):
         try:
             data = conn.recv(2048)
             reply = data.decode('utf-8')
-            if currentId == r.get_current_player() == 0:
-                print(reply)
+            curr_player = r.get_current_player()
+            if currentId == curr_player:
+                print(currentId)
+                # if reply != 'x': print(reply)
                 response = reply.strip('[').strip(']')
                 response = [int(s) for s in response.split(',').strip() if s != '']
                 r.set_client_input(response)
+                # print(response)
             if not data:
                 conn.send(str.encode("Goodbye"))
                 break

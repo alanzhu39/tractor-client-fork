@@ -198,20 +198,23 @@ class TractorClient():
 
     def send_data(self, position):
         if position:
-            print(position)
+            pass
         reply = None
         if not position:
             reply = self.net.send('x')
-        elif position[1] >= 445 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[
-            0] < 450 + (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2:
+        elif position[1] >= 445 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[0] \
+                < 450 + (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2:
             # card click
-            click_index = position[0] - (450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2) % 22
+            click_index = int((position[0] - (450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2)) // 22)
             self.card_indices.append(click_index)
-            print('appended')
-            reply = self.net.send(str(self.card_indices))
+            print(self.card_indices)
+            reply = self.net.send('x')
         elif 772 <= position[0] <= 892 and 465 <= position[1] <= 530:
             # play button press
-            reply = self.net.send(str(self.card_indices))
+            if not self.card_indices:
+                reply = self.net.send('x')
+            else:
+                reply = self.net.send(str(self.card_indices))
             print('play')
             self.card_indices.clear()
         elif 772 <= position[0] <= 892 and 532 <= position[1] <= 597:

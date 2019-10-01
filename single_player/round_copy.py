@@ -220,6 +220,7 @@ class testRound(object):
 
     def choose_di_pai(self):
         zhuang_jia_player = self.players[self.zhuang_jia_id]
+        self.current_player = self.zhuang_jia_id
         for card in self.deck.cards:
             zhuang_jia_player.draw(card)
         self.di_pai = False
@@ -227,9 +228,9 @@ class testRound(object):
         zhuang_jia_player.print_hand()
         print("The trump suit is " + self.trump_suit)
         while len(self.discards) != 8:
-            print("Enter 8 indexes you want to discard:")
+            # print("Enter 8 indexes you want to discard:")
             discard_indexes = self.get_player_input(self.zhuang_jia_id)
-            if not self.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
+            if not len(discard_indexes) == 8 or not self.is_valid_input(zhuang_jia_player, discard_indexes):
                 continue
             else:
                 break
@@ -476,6 +477,7 @@ class testRound(object):
     def play_turn(self, sp_index):
         self.cards_played = {0: [], 1: [], 2: [], 3: []}
         first_player = self.players[sp_index]
+        self.current_player = sp_index
         print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
                                                    ' Attacker current points: ' + str(self.attacker_points))
 
@@ -520,7 +522,6 @@ class testRound(object):
             current_turn_points += npi['points']
             self.del_indexes(self.players[cur_player_index], npi['index_response'])
 
-
         if self.is_attacker(info_dict['biggest_player']):
             self.attacker_points += current_turn_points
 
@@ -528,6 +529,7 @@ class testRound(object):
 
         return {'trick_winner': self.players.index(info_dict['biggest_player']),
                 'num_cards': info_dict['size']}
+
     def get_players(self):
         return self.players
 
@@ -541,9 +543,9 @@ class testRound(object):
         # just player indexes, check if integerse
         self.current_player = curr_player
         response = self.client_input
-        self.current_player = 5
 
         integer_list = [s for s in response if s.isdigit()]
+        # print(integer_list)
         return list(map(int, integer_list))
 
     def is_valid_input(self, player, response):
@@ -553,6 +555,7 @@ class testRound(object):
             if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
                 return False
         self.client_input = ''
+        self.current_player = 5
         return True
 
     def get_data(self):
