@@ -233,6 +233,8 @@ class testRound(object):
             if not len(discard_indexes) == 8 or not self.is_valid_input(zhuang_jia_player, discard_indexes):
                 continue
             else:
+                self.current_player = 5
+                self.client_input = ''
                 break
         # ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
         for each_index in discard_indexes:
@@ -351,17 +353,19 @@ class testRound(object):
         return total
 
     def get_first_player_move(self, first_player):
+        self.current_player = self.players.index(first_player)
         fp_input = self.get_player_input(self.current_player)
 
         # Check if input is a list of valid indexes
         if not self.is_valid_input(first_player, fp_input):
             return {"move_code": "invalid indexes"}
         fp_hand = first_player.get_hand()
+        print(fp_input)
 
         # CHECK IF SELECtiON IS ONE SUIT
         suit_list = []
         for each_index in fp_input:
-            suit_list.append(self.get_suit(first_player.get_hand()[each_index]))
+            suit_list.append(self.get_suit(fp_hand[each_index]))
         suit_set = set(suit_list)
         if len(suit_set) != 1:
             return {"move_code": "suit_set error"}
@@ -412,6 +416,7 @@ class testRound(object):
         return total_pair
 
     def get_secondary_player_move(self, player, cur_hand_info):
+        self.current_player = self.players.index(player)
         cur_suit = cur_hand_info['suit']
         hand_size = cur_hand_info['size']
         print("Current suit: " + cur_suit + ", current hand size: " + str(hand_size))
@@ -477,7 +482,6 @@ class testRound(object):
     def play_turn(self, sp_index):
         self.cards_played = {0: [], 1: [], 2: [], 3: []}
         first_player = self.players[sp_index]
-        self.current_player = sp_index
         print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
                                                    ' Attacker current points: ' + str(self.attacker_points))
 
@@ -489,8 +493,10 @@ class testRound(object):
                 continue
             else:
                 break
-        for index in fpi['index_responses']:
-            self.cards_played[sp_index].append(first_player.get_hand[index])
+        self.current_player = 5
+        self.client_input = ''
+        for index in fpi['index_response']:
+            self.cards_played[sp_index].append(first_player.get_hand()[index])
         current_turn_points = 0
         current_turn_points += fpi['points']
         info_dict = {'suit': fpi['suit'],
@@ -501,7 +507,6 @@ class testRound(object):
         self.del_indexes(first_player, fpi['index_response'])
 
         for i in range(sp_index + 1, sp_index + 4):
-            self.current_player = i % 4
             cur_player_index = i % 4
             cur_player = self.players[cur_player_index]
             print("Hello " + cur_player.get_name() + '. Please enter the cards you would like to play.'
@@ -515,8 +520,10 @@ class testRound(object):
                     continue
                 else:
                     break
-            for index in npi['index_responses']:
-                self.cards_played[cur_player_index].append(cur_player.get_hand[index])
+            self.current_player = 5
+            self.client_input = ''
+            for index in npi['index_response']:
+                self.cards_played[cur_player_index].append(cur_player.get_hand()[index])
             info_dict['biggest_hand'] = npi['biggest_hand']
             info_dict['biggest_player'] = npi['biggest_player']
             current_turn_points += npi['points']
@@ -544,9 +551,8 @@ class testRound(object):
         self.current_player = curr_player
         response = self.client_input
 
-        integer_list = [s for s in response if s.isdigit()]
-        # print(integer_list)
-        return list(map(int, integer_list))
+        integer_list = [int(s) for s in response if s.isdigit()]
+        return integer_list
 
     def is_valid_input(self, player, response):
         if len(set(response)) != len(response):
@@ -554,8 +560,6 @@ class testRound(object):
         for each_index in response:
             if int(each_index) < 0 or int(each_index) >= len(player.get_hand()):
                 return False
-        self.client_input = ''
-        self.current_player = 5
         return True
 
     def get_data(self):

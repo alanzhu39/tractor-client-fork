@@ -45,11 +45,11 @@ def threaded_client(conn):
             data = conn.recv(2048)
             reply = data.decode('utf-8')
             curr_player = r.get_current_player()
+            print(curr_player)
             if currentId == curr_player:
-                print(currentId)
                 # if reply != 'x': print(reply)
                 response = reply.strip('[').strip(']')
-                response = [int(s) for s in response.split(',').strip() if s != '']
+                response = [s.strip() for s in response.split(',') if s != '']
                 r.set_client_input(response)
                 # print(response)
             if not data:

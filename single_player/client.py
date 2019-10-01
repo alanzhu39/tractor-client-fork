@@ -51,6 +51,7 @@ class TractorClient():
         self.card_indices = []
 
     def draw_board(self):
+        # todo: left cards played display, last card click, score display
         self.draw_hands()
         self.draw_cleared()
         self.draw_deck()
@@ -197,8 +198,6 @@ class TractorClient():
         pygame.display.flip()
 
     def send_data(self, position):
-        if position:
-            pass
         reply = None
         if not position:
             reply = self.net.send('x')
