@@ -549,7 +549,7 @@ class Round(object):
 
         biggest_hand = cur_hand_info['biggest_hand']
         biggest_player = cur_hand_info['biggest_player']
-        if hand_size == 1:
+        if hand_size == 1: #single card
             npi_response = self.return_singles(npi_hand)
             has_bigger_single = self.cmp_cards(npi_response[0], biggest_hand[0]) > 0
             return {'move_code': 'valid',
