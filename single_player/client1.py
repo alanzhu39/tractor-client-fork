@@ -51,6 +51,7 @@ class TractorClient():
         self.card_indices = []
 
     def draw_board(self):
+        # todo: last card click, score display
         self.draw_hands()
         self.draw_cleared()
         self.draw_deck()
@@ -145,7 +146,7 @@ class TractorClient():
                     self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 222],
                                      area=pygame.Rect(0, 0, 15, 100), special_flags=0)
                 else:
-                    self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 107],
+                    self.screen.blit(small_deck_dict[left_played[card_index]], [left_coord + 15 * (card_index), 222],
                                      area=None, special_flags=0)
                 card_index += 1
         if len(right_played) > 0:
@@ -199,11 +200,12 @@ class TractorClient():
     def send_data(self, position):
         reply = None
         if not position:
-            reply = self.net.send('x')
-        elif position[1] >= 445 and 450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2 < position[0] \
-                < 450 + (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2:
+            return self.net.send('x')
+        player_hand = self.data[self.playerID * 3 + 1]
+        left_offset = (22 * (len(player_hand) - 1) + 100) / 2
+        if position[1] >= 445 and 450 - left_offset < position[0] < 450 + left_offset:
             # card click
-            click_index = int((position[0] - (450 - (22 * (len(self.data[self.playerID * 3 + 1]) - 1) + 100) / 2)) // 22)
+            click_index = min(len(player_hand) - 1, int((position[0] - (450 - left_offset)) // 22))
             self.card_indices.append(click_index)
             print(self.card_indices)
             reply = self.net.send('x')
@@ -274,5 +276,5 @@ while 1:
             # quit if the quit button was pressed
             if event.type == pygame.QUIT:
                 exit()
-        myClient.set_data(myClient.parse_data(myClient.send_data((0,0))))
+        myClient.set_data(myClient.parse_data(myClient.send_data(None)))
 
