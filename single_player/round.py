@@ -184,6 +184,41 @@ class Round(object):
             temp_card_value += 100
         return temp_card_value
 
+    def view_value(self, card):
+        card_value = self.card_value(card)
+        suit_order = {
+            'diamonds': 1,
+            'clubs': 2,
+            'hearts': 3,
+            'spades': 4
+        }
+        r_suit_order = {
+            1: 'diamonds',
+            2: 'clubs',
+            3: 'hearts',
+            4: 'spades'
+        }
+        if self.trump_suit == 'none':
+            if self.get_suit(card) == 'trump':
+                return 400+card_value
+            else:
+                if self.get_suit(card) == 'diamonds':
+                    return 300+card_value
+                if self.get_suit(card) == 'clubs':
+                    return 200+card_value
+                if self.get_suit(card) == 'hearts':
+                    return 100+card_value
+                return card_value
+        else:
+            trump_suit = self.trump_suit
+            suit_index = suit_order[trump_suit]
+            if self.get_suit(card) == 'trump':
+                return 400+card_value
+            for i in range(suit_index, suit_index+4):
+                c_index = i % 4
+                if self.get_suit(card) == r_suit_order[c_index]:
+                    return 100*(4-(i-suit_index)) + card_value
+
     def cmp_cards(self, a, b):
         # Compares cards in game, with consideration to the first card played
         # returns 1 if a>b, 0 if a=b, and -1 if a<b
