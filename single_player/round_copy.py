@@ -105,6 +105,8 @@ class testRound(object):
         # no liang -> flip di pai
         if self.trump_suit == "none":
             self.flip_di_pai()
+        for player in self.players:
+            player.set_hand(player.get_hand().sort(key = self.view_value))
         # zhuang jia chooses 8 cards for di pai
         self.choose_di_pai()
 
@@ -155,6 +157,79 @@ class testRound(object):
                 print("You don't have the cards necessary for that liang")
         else:
             print("You don't have the cards necessary for that liang")
+
+    def card_value(self, card):
+        """
+        Returns a relative value of the card.
+        Lowest card in a suit is 1, second lowest is 2, etc... highest (usually A) is 12 because one rank is trump
+        All cards of trump suit and not in the top 12 will have 100 added to signify trump
+        ex: trump_rank == 4, trump_suit == spades
+        2d: 1 3d: 2 5d: 3 ... 10d: 8 Jd: 9 Qd: 10 Kd: 11 Ad: 12
+        2s: 101 3s: 102 5s: 103 10s: 108 Js: 109 Qs: 110 Ks: 111 As: 112 4d: 113 4c: 113 4s: 114 SJo: 115 BJo: 116
+
+        ex: trump_rank == 4, trump_suit == "none" (wuzhu)
+        2d: 1 3d: 2 5d: 3 ... Ad: 12
+        4c: 114 4d: 114 4h: 114 4s: 114 SJo: 115 BJo: 116
+
+        :param card:
+        :return: int
+        """
+        trump_rank = self.trump_rank
+        trump_suit = self.trump_suit
+        if card.is_big_joker:
+            return 116
+        elif card.is_small_joker:
+            return 115
+        card_suit = card.get_suit()
+        card_rank = card.get_rank()
+        if card_rank == trump_rank:
+            if card_suit == trump_suit or trump_suit == "none":
+                return 114
+            else:
+                return 113
+        rank_dict = {'2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '10': 9, 'J': 10, 'Q': 11,
+                     'K': 12, 'A': 13}
+        temp_card_value = rank_dict[card_rank]
+        if temp_card_value > rank_dict[trump_rank]:
+            temp_card_value -= 1
+        if self.is_trump(card):
+            temp_card_value += 100
+        return temp_card_value
+
+    def view_value(self, card):
+        card_value = self.card_value(card)
+        suit_order = {
+            'diamonds': 1,
+            'clubs': 2,
+            'hearts': 3,
+            'spades': 4
+        }
+        r_suit_order = {
+            1: 'diamonds',
+            2: 'clubs',
+            3: 'hearts',
+            4: 'spades'
+        }
+        if self.trump_suit == 'none':
+            if self.get_suit(card) == 'trump':
+                return 400+card_value
+            else:
+                if self.get_suit(card) == 'diamonds':
+                    return 300+card_value
+                if self.get_suit(card) == 'clubs':
+                    return 200+card_value
+                if self.get_suit(card) == 'hearts':
+                    return 100+card_value
+                return card_value
+        else:
+            trump_suit = self.trump_suit
+            suit_index = suit_order[trump_suit]
+            if self.get_suit(card) == 'trump':
+                return 400+card_value
+            for i in range(suit_index, suit_index+4):
+                c_index = i % 4
+                if self.get_suit(card) == r_suit_order[c_index]:
+                    return 100*(4-(i-suit_index)) + card_value
 
     def cmp_cards(self, a, b):
         # Compares cards in game, with consideration to the first card played
@@ -319,6 +394,33 @@ class testRound(object):
         num_pairs /= 2
         return num_pairs
 
+    def contains_tractor_of_length(self, hand, length_tractor):
+        """
+        This checks if the first player's move is a valid tractor.
+        we find the value of each card in the play and add it to a list
+        This list is then sorted
+        If it is a tractor, it should look something similar to
+        (1) [3, 3, 4, 4, 5, 5] etc.
+        Since it is already the same suit, we just need to check that we have this type of sequence
+        :param hand: the list of cards first player wants to play
+        :param length_tractor: the number of pairs in the tractor (min: 2)
+        :return:
+        """
+        assert length_tractor >= 2, 'contains_tractor_of_length function invalid variable'
+        assert len(hand) % 2 == 0, 'hand contains odd number of cards in contains_tractor_of_length'
+        assert len(hand) == 2 * length_tractor
+        card_value_list = []
+        for card in hand:
+            card_value_list.append(self.card_value(card))
+        card_value_list.sort()
+
+        assert len(hand) == len(card_value_list), 'contains_tractor_of_length error'
+        for i in range(len(card_value_list)):
+            if card_value_list[i] - card_value_list[0] != i % 2:
+                return False
+        #At this point, should satisfy the format (1) in the documentation
+        return True
+
     def is_valid_fpi(self, hand):
         if len(hand) == 2:
             if self.contains_pair(hand) == 1:
@@ -329,6 +431,18 @@ class testRound(object):
             return False
 
     # ASSUMES ALL CARDS ARE IN SAME SuIT
+    def return_tractors(self, hand):
+        '''
+        Should be a tractor at this point, just need to return in tractor format
+        :param hand:
+        :return:
+        '''
+        maxval = 0
+        for card in hand:
+            maxval = max(self.card_value(card), maxval)
+        len_tractor = len(hand) // 2
+        return Tractor(maxval, len_tractor)
+
     def return_pairs(self, hand):
         list_pair = []
         for card in hand:
@@ -414,6 +528,35 @@ class testRound(object):
                         total_pair += 1
         total_pair /= 2
         return total_pair
+
+    def contains_tractor_of_length_in_suit(self, hand, length, suit):
+        card_value_list = []
+        for card in hand:
+            if self.get_suit(card) == suit:
+                card_value_list.append(self.card_value(card))
+        card_value_list.sort()
+        if len(card_value_list) < 2 * length:
+            return False
+        found_tractor = False
+        for starting_index in range(len(card_value_list) - 2 * length + 1):
+            not_a_tractor = False
+            for i in range(starting_index, starting_index + 2 * length):
+                if not_a_tractor:
+                    break
+                if card_value_list[i] - card_value_list[starting_index] != i % 2 - starting_index:
+                    not_a_tractor = True
+
+            if not not_a_tractor:
+                found_tractor = True
+                return True
+
+        return False
+
+    def tractor_gt(self, tractor1, tractor2):
+        if tractor1.get_highest_value() > tractor2.get_highest_value():
+            return True
+        else:
+            return False
 
     def get_secondary_player_move(self, player, cur_hand_info):
         self.current_player = self.players.index(player)
@@ -567,8 +710,12 @@ class testRound(object):
         data += str(0) + ':' + str(self.players[0].get_hand()) + ':' + str(self.cards_played[0])
         for i in range(3):
             data += ':' + str(i+1) + ':' + str(self.players[i+1].get_hand()) + ':' + str(self.cards_played[i+1])
-        data += ':' + str(self.clear) + ':' + str(self.di_pai) + ':' + str(self.game_start)
+        data += ':' + str(self.clear) + ':' + str(self.di_pai) + ':' + str(self.game_start) \
+                + ':' + str(self.attacker_points) + ':' + str(self.trump_suit)
         return data
 
     def set_client_input(self, input):
         self.client_input = input
+
+    def get_attacker_points(self):
+        return self.attacker_points

@@ -51,11 +51,22 @@ class TractorClient():
         self.card_indices = []
 
     def draw_board(self):
-        # todo: score display
         self.draw_hands()
         self.draw_cleared()
         self.draw_deck()
         self.draw_buttons()
+        self.draw_stats()
+
+    def draw_stats(self):
+        pass
+        # draws score, trump suit
+        white = (255, 255, 255)
+        my_font = pygame.font.SysFont('comicsansmc', 20)
+        score = my_font.render('Score: ' + self.data[15], True, white)
+        trump = my_font.render('Trump: ' + self.data[16], True, white)
+        self.screen.blit(score, [110, 5])
+        self.screen.blit(trump, [110, 25])
+
 
     def draw_hands(self):
         pass
@@ -229,7 +240,7 @@ class TractorClient():
     def parse_data(self, response):
         if not response:
             return self.data
-        data = [0,None,None,1,None,None,2,None,None,3,None,None,None,None,None]
+        data = [0,None,None,1,None,None,2,None,None,3,None,None,None,None,None,None,None]
         split_data = response.split(':')
         data[1] = self.make_list(split_data[1])
         data[2] = self.make_list(split_data[2])
@@ -242,6 +253,8 @@ class TractorClient():
         data[12] = str(split_data[12])
         data[13] = str(split_data[13])
         data[14] = str(split_data[14])
+        data[15] = str(split_data[15])
+        data[16] = str(split_data[16])
         return data
 
     def make_list(self, list_in):
