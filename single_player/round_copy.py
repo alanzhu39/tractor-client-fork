@@ -105,8 +105,8 @@ class testRound(object):
         # no liang -> flip di pai
         if self.trump_suit == "none":
             self.flip_di_pai()
-        for player in self.players:
-            player.set_hand(player.get_hand().sort(key = self.view_value))
+        for i in range(len(self.players)):
+            self.players[i].hand.sort(key = self.view_value, reverse = True)
         # zhuang jia chooses 8 cards for di pai
         self.choose_di_pai()
 
@@ -199,16 +199,16 @@ class testRound(object):
     def view_value(self, card):
         card_value = self.card_value(card)
         suit_order = {
-            'diamonds': 1,
-            'clubs': 2,
-            'hearts': 3,
-            'spades': 4
+            'diamonds': 0,
+            'clubs': 1,
+            'hearts': 2,
+            'spades': 3
         }
         r_suit_order = {
-            1: 'diamonds',
-            2: 'clubs',
-            3: 'hearts',
-            4: 'spades'
+            0: 'diamonds',
+            1: 'clubs',
+            2: 'hearts',
+            3: 'spades'
         }
         if self.trump_suit == 'none':
             if self.get_suit(card) == 'trump':
