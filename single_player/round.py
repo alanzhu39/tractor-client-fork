@@ -159,7 +159,7 @@ class Round(object):
         2d: 1 3d: 2 5d: 3 ... Ad: 12
         4c: 114 4d: 114 4h: 114 4s: 114 SJo: 115 BJo: 116
 
-        :param card:
+        :param card: found in deck.py file
         :return: int
         """
         trump_rank = self.trump_rank
@@ -185,6 +185,12 @@ class Round(object):
         return temp_card_value
 
     def view_value(self, card):
+        '''
+        Returns an integer representing the ordering of how cards are viewed in the GUI. Trumps have the highest ranking
+        and within each suit, the higher card has a higher ranking.
+        :param card:
+        :return:
+        '''
         card_value = self.card_value(card)
         suit_order = {
             'diamonds': 1,
@@ -539,7 +545,7 @@ class Round(object):
                 found_tractor = True
                 return True
 
-        return False
+        return found_tractor
 
     def tractor_gt(self, tractor1, tractor2):
         if tractor1.get_highest_value() > tractor2.get_highest_value():
