@@ -47,16 +47,16 @@ def view_value(self, card):
     """
     card_value = self.card_value(card)
     suit_order = {
-        'diamonds': 1,
-        'clubs': 2,
-        'hearts': 3,
-        'spades': 4
+        'diamonds': 0,
+        'clubs': 1,
+        'hearts': 2,
+        'spades': 3
     }
     r_suit_order = {
-        1: 'diamonds',
-        2: 'clubs',
-        3: 'hearts',
-        4: 'spades'
+        0: 'diamonds',
+        1: 'clubs',
+        2: 'hearts',
+        3: 'spades'
     }
     if self.trump_suit == 'none':
         if self.get_suit(card) == 'trump':

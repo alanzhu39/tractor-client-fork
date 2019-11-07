@@ -12,9 +12,9 @@ dealing, compare cards, and playing
 from typing import Dict, Any
 
 from single_player.deck import *
-import single_player.player_input_methods as pim
-import single_player.round_functions as round_functions
+from single_player.round_functions import game_functions, outdated_functions, rank_functions
 
+connections = []
 
 class Round(object):
     """
@@ -29,6 +29,7 @@ class Round(object):
     attacker_points = # points attackers collected
     """
     num_di_pai = 8
+    global connections
 
     def __init__(self, players):
         self.deck = Deck()
@@ -48,6 +49,12 @@ class Round(object):
         self.suit_played = "none"
         self.discards = []
         self.attacker_points = 0
+        self.current_player = 5
+        self.cards_played = {0: [], 1: [], 2: [], 3: []}
+        self.clear = False
+        self.di_pai = False
+        self.game_start = False
+        self.client_input = ''
         # assumes there is a zhuang jia
         print("Round starting: " + players[self.zhuang_jia_id].get_name()
               + " is zhuang jia and the trump rank is " + self.trump_rank)
@@ -63,7 +70,7 @@ class Round(object):
         This function starts the round (deals cards, etc.) and plays until the end.
         :return: int equal to number of points attacker scored for the round
         """
-        return round_functions.game_functions.play_round(self)
+        return game_functions.play_round(self)
 
     def deal(self):
         """
@@ -71,11 +78,12 @@ class Round(object):
         choose_di_pai function
         :return: No return value
         """
-        return round_functions.game_functions.deal(self)
+        return game_functions.deal(self)
 
     def liang_query(self, current_drawer):
         #Outdated function
         "This function was used for testing while prototyping with a text-based version of the game"
+        pass
 
     def card_value(self, card):
         """
@@ -84,7 +92,7 @@ class Round(object):
         :param card: found in deck.py file
         :return: int
         """
-        return round_functions.rank_functions.compare_value(self, card)
+        return rank_functions.compare_value(self, card)
 
     def view_value(self, card):
         '''
@@ -94,7 +102,7 @@ class Round(object):
         :return:
         '''
 
-        return round_functions.rank_functions.view_value(self, card)
+        return rank_functions.view_value(self, card)
 
     def cmp_cards(self, a, b):
         """
@@ -103,21 +111,21 @@ class Round(object):
         :param b: Card 2
         :return: int (-1, 0, or 1)
         """
-        return round_functions.rank_functions.cmp_cards(self, a, b)
+        return rank_functions.cmp_cards(self, a, b)
 
     def flip_di_pai(self):
         """
         Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
         Otherwise makes the largest card the trump rank
         """
-        return round_functions.game_functions.flip_di_pai(self)
+        return game_functions.flip_di_pai(self)
 
     def choose_di_pai(self):
         """
         Function that let's Zhuang Jia discard 8 cards into his di pai
         :return: None
         """
-        return round_functions.game_functions.choose_di_pai(self)
+        return game_functions.choose_di_pai(self)
 
     def get_trump_info(self):
         trump_info = {
@@ -245,10 +253,11 @@ class Round(object):
         return total
 
     def get_first_player_move(self, first_player):
-        fp_input = pim.get_player_input()
+        self.current_player = self.players.index(first_player)
+        fp_input = self.get_player_input(self.current_player)
 
         # Check if input is a list of valid indexes
-        if not pim.is_valid_input(first_player, fp_input):
+        if not self.is_valid_input(first_player, fp_input):
             return {"move_code": "invalid indexes"}
         fp_hand = first_player.get_hand()
 
@@ -338,11 +347,12 @@ class Round(object):
             return False
 
     def get_secondary_player_move(self, player, cur_hand_info):
+        self.current_player = self.players.index(player)
         cur_suit = cur_hand_info['suit']
         hand_size = cur_hand_info['size']
         print("Current suit: " + cur_suit + ", current hand size: " + str(hand_size))
-        np_input = pim.get_player_input()
-        if not pim.is_valid_input(player, np_input):
+        np_input = self.get_player_input(self.current_player)
+        if not self.is_valid_input(player, np_input):
             return {"move_code": "invalid indexes"}
         if not hand_size == len(np_input):
             return {"move_code": "wrong number of cards"}
@@ -423,6 +433,7 @@ class Round(object):
             del player.get_hand()[index]
 
     def play_turn(self, sp_index):
+        self.cards_played = {0: [], 1: [], 2: [], 3: []}
         first_player = self.players[sp_index]
         print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
                                                    ' Attacker current points: ' + str(self.attacker_points))
@@ -435,6 +446,10 @@ class Round(object):
                 continue
             else:
                 break
+        self.current_player = 5
+        self.client_input = ''
+        for index in fpi['index_response']:
+            self.cards_played[sp_index].append(first_player.get_hand()[index])
         current_turn_points = 0
         current_turn_points += fpi['points']
         info_dict = {'suit': fpi['suit'],
@@ -458,6 +473,10 @@ class Round(object):
                     continue
                 else:
                     break
+            self.current_player = 5
+            self.client_input = ''
+            for index in npi['index_response']:
+                self.cards_played[cur_player_index].append(cur_player.get_hand()[index])
             info_dict['biggest_hand'] = npi['biggest_hand']
             info_dict['biggest_player'] = npi['biggest_player']
             current_turn_points += npi['points']
@@ -471,3 +490,26 @@ class Round(object):
         return {'trick_winner': self.players.index(info_dict['biggest_player']),
                 'num_cards': info_dict['size']}
 
+    def get_player_input(self, curr_player):
+        return game_functions.get_player_input(self, curr_player)
+
+    def is_valid_input(self, player, response):
+        return game_functions.is_valid_input(self, player, response)
+
+    def get_current_player(self):
+        return self.current_player
+
+    def get_data(self):
+        data = ''
+        data += str(0) + ':' + str(self.players[0].get_hand()) + ':' + str(self.cards_played[0])
+        for i in range(3):
+            data += ':' + str(i+1) + ':' + str(self.players[i+1].get_hand()) + ':' + str(self.cards_played[i+1])
+        data += ':' + str(self.clear) + ':' + str(self.di_pai) + ':' + str(self.game_start) \
+                + ':' + str(self.attacker_points) + ':' + str(self.trump_suit)
+        return data
+
+    def set_client_input(self, input):
+        self.client_input = input
+
+    def get_attacker_points(self):
+        return self.attacker_points

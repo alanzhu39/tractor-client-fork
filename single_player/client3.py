@@ -1,5 +1,5 @@
 import pygame
-import single_player.round_copy as myConns
+import single_player.round as myConns
 from time import sleep
 import socket
 from single_player.network import Network
@@ -220,8 +220,10 @@ class TractorClient():
         if position[1] >= 445 and 450 - left_offset < position[0] < 450 + left_offset:
             # card click
             click_index = min(len(player_hand) - 1, int((position[0] - (450 - left_offset)) // 22))
-            self.card_indices.append(click_index)
-            print(self.card_indices)
+            if click_index in self.card_indices:
+                self.card_indices.remove(click_index)
+            else:
+                self.card_indices.append(click_index)
             reply = self.net.send('x')
         elif 772 <= position[0] <= 892 and 465 <= position[1] <= 530:
             # play button press

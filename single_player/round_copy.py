@@ -30,6 +30,7 @@ class testRound(object):
     """
     num_di_pai = 8
     global connections
+
     def __init__(self, players):
         self.deck = Deck()
         assert (len(players) == 4)
@@ -303,7 +304,7 @@ class testRound(object):
         zhuang_jia_player.print_hand()
         print("The trump suit is " + self.trump_suit)
         while len(self.discards) != 8:
-            # print("Enter 8 indexes you want to discard:")
+            print("Enter 8 indexes you want to discard:")
             discard_indexes = self.get_player_input(self.zhuang_jia_id)
             if not len(discard_indexes) == 8 or not self.is_valid_input(zhuang_jia_player, discard_indexes):
                 continue
@@ -474,7 +475,6 @@ class testRound(object):
         if not self.is_valid_input(first_player, fp_input):
             return {"move_code": "invalid indexes"}
         fp_hand = first_player.get_hand()
-        print(fp_input)
 
         # CHECK IF SELECtiON IS ONE SUIT
         suit_list = []
