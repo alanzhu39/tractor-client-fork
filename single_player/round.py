@@ -13,6 +13,7 @@ from typing import Dict, Any
 
 from single_player.deck import *
 import single_player.player_input_methods as pim
+from single_player.round_functions import *
 
 
 class Round(object):
@@ -162,27 +163,7 @@ class Round(object):
         :param card: found in deck.py file
         :return: int
         """
-        trump_rank = self.trump_rank
-        trump_suit = self.trump_suit
-        if card.is_big_joker:
-            return 116
-        elif card.is_small_joker:
-            return 115
-        card_suit = card.get_suit()
-        card_rank = card.get_rank()
-        if card_rank == trump_rank:
-            if card_suit == trump_suit or trump_suit == "none":
-                return 114
-            else:
-                return 113
-        rank_dict = {'2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '10': 9, 'J': 10, 'Q': 11,
-                     'K': 12, 'A': 13}
-        temp_card_value = rank_dict[card_rank]
-        if temp_card_value > rank_dict[trump_rank]:
-            temp_card_value -= 1
-        if self.is_trump(card):
-            temp_card_value += 100
-        return temp_card_value
+        return rank_functions.card_value(self, card)
 
     def view_value(self, card):
         '''
