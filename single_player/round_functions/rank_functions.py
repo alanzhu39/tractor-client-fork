@@ -1,4 +1,4 @@
-def card_value(self, card):
+def compare_value(self, card):
     """
     Returns a relative value of the card.
     Lowest card in a suit is 1, second lowest is 2, etc... highest (usually A) is 12 because one rank is trump
@@ -35,3 +35,89 @@ def card_value(self, card):
     if self.is_trump(card):
         temp_card_value += 100
     return temp_card_value
+
+
+def view_value(self, card):
+    """
+    Returns an integer representing the ordering of how cards are viewed in the GUI. Trumps have the highest ranking
+    and within each suit, the higher card has a higher ranking.
+    :param self: Round object passed in
+    :param card:
+    :return: int corresponding to ranking in which cards are displayed on GUI
+    """
+    card_value = self.card_value(card)
+    suit_order = {
+        'diamonds': 1,
+        'clubs': 2,
+        'hearts': 3,
+        'spades': 4
+    }
+    r_suit_order = {
+        1: 'diamonds',
+        2: 'clubs',
+        3: 'hearts',
+        4: 'spades'
+    }
+    if self.trump_suit == 'none':
+        if self.get_suit(card) == 'trump':
+            return 400+card_value
+        else:
+            if self.get_suit(card) == 'diamonds':
+                return 300+card_value
+            if self.get_suit(card) == 'clubs':
+                return 200+card_value
+            if self.get_suit(card) == 'hearts':
+                return 100+card_value
+            return card_value
+    else:
+        trump_suit = self.trump_suit
+        suit_index = suit_order[trump_suit]
+        if self.get_suit(card) == 'trump':
+            return 400+card_value
+        for i in range(suit_index, suit_index+4):
+            c_index = i % 4
+            if self.get_suit(card) == r_suit_order[c_index]:
+                return 100*(4-(i-suit_index)) + card_value
+
+
+def cmp_cards(self, a, b):
+    """
+    Compares cards in the context of the round. Returns 0 if cards are same, 1 if a>b, and -1 if a<b
+    :param self: round instance
+    :param a: Card 1
+    :param b: Card 2
+    :return: int (-1, 0, or 1)
+    """
+    if a == b:
+        return 0
+    if a.is_big_joker:
+        return 1
+    if b.is_big_joker:
+        return -1
+    if a.is_small_joker:
+        return 1
+    if b.is_small_joker:
+        return -1
+    if a.rank == self.trump_rank and a.suit == self.trump_suit:
+        return 1
+    if b.rank == self.trump_rank and b.suit == self.trump_suit:
+        return -1
+    if a.rank == self.trump_rank and b.rank == self.trump_rank:
+        return 0
+    if a.rank == self.trump_rank:
+        return 1
+    if b.rank == self.trump_rank:
+        return -1
+
+    suit_dict = {'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4, self.suit_played: 5, self.trump_suit: 6}
+    rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
+                 'K': 13, 'A': 14, self.trump_rank: 15}
+    if suit_dict[a.suit] > suit_dict[b.suit]:
+        return 1
+    elif suit_dict[a.suit] < suit_dict[b.suit]:
+        return -1
+    else:
+        if rank_dict[a.rank] > rank_dict[b.rank]:
+            return 1
+        else:
+            return -1

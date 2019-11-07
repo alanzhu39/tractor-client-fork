@@ -13,7 +13,7 @@ from typing import Dict, Any
 
 from single_player.deck import *
 import single_player.player_input_methods as pim
-from single_player.round_functions import *
+import single_player.round_functions as round_functions
 
 
 class Round(object):
@@ -52,118 +52,39 @@ class Round(object):
         print("Round starting: " + players[self.zhuang_jia_id].get_name()
               + " is zhuang jia and the trump rank is " + self.trump_rank)
 
-    # returns number of points attackers earned
+    def get_players(self):
+        return self.players
+
+    def get_deck(self):
+        return self.deck
+
     def play_round(self):
-        self.deal()
-        # todo implement trump ranking (depends on trump rank and trump suit)
-        # play out the turns
-        # pass in trump info as a dictionary
-        info = self.play_turn(self.zhuang_jia_id)
-        while len(self.players[0].get_hand()) > 0:
-            # todo need id of player starting next turn
-            # assumes that play_turn return an info dictionary
-            trick_winner = info['trick_winner']
-            info = self.play_turn(trick_winner)
-
-        # reveal di pai and add to attacker's points if necessary
-        attacker_multiplier = 2 * info['num_cards']
-        if (info['trick_winner'] == self.zhuang_jia_id) or (info['trick_winner'] == (self.zhuang_jia_id + 2) % 4):
-            attacker_multiplier = 0
-
-        di_pai_points = 0
-        print("Di pai: ", end='')
-        for card in self.discards:
-            di_pai_points += card.point_value
-            print(card, end=' ')
-        print('')
-
-        if attacker_multiplier > 0:
-            print("Attackers won the last trick, adding %d * %d = %d points."
-                  % (attacker_multiplier, di_pai_points, attacker_multiplier * di_pai_points))
-            self.attacker_points += attacker_multiplier * di_pai_points
-
-        return self.attacker_points
+        """
+        This function starts the round (deals cards, etc.) and plays until the end.
+        :return: int equal to number of points attacker scored for the round
+        """
+        return round_functions.game_functions.play_round(self)
 
     def deal(self):
-        self.deck.shuffle()
-        current_drawer = self.zhuang_jia_id
-        while len(self.deck) > self.num_di_pai:
-            self.players[current_drawer].draw(self.deck.pop())
-            print(self.players[current_drawer].name)
-            self.players[current_drawer].print_hand()
-            # self.liang_query(current_drawer)
-            current_drawer = (current_drawer + 1) % 4
-        # no liang -> flip di pai
-        if self.trump_suit == "none":
-            self.flip_di_pai()
-        # zhuang jia chooses 8 cards for di pai
-        self.choose_di_pai()
+        """
+        This non-pure function shuffles the deck, deals cards, flips di pai if necessary, and then executes the
+        choose_di_pai function
+        :return: No return value
+        """
+        return round_functions.game_functions.deal(self)
 
     def liang_query(self, current_drawer):
-        # format is "suit cnt" or "SJo 2" or "BJo 2"
-        print("Liang?")
-        response = input().split()
-        # "n" "no" or nothing means no liang
-        if len(response) == 0 or response[0] == "n" or response[0] == "no":
-            print("No liang, continuing")
-            return
-        # check for validity of the response
-        if len(response) != 2:
-            print("invalid response, continuing")
-            return
-        if response[1] != "1" and response[1] != "2":
-            print("invalid response, continuing")
-            return
-        if (response[0] == "SJo" or response[0] == "BJo") and response[1] == "2":
-            # wu zhu liang
-            new_trump_suit = "wu zhu"
-            new_trump_suit_cnt = 3
-        elif response[0] in Card.suit_map:
-            # other liang
-            new_trump_suit = response[0]
-            new_trump_suit_cnt = int(response[1])
-        else:
-            print("invalid response, continuing")
-            return
-
-        # check whether the liang is valid
-        if response[0] == "SJo":
-            card_to_check = SMALL_JOKER
-            cnt_to_check = 2
-        elif response[0] == "BJo":
-            card_to_check = BIG_JOKER
-            cnt_to_check = 2
-        else:
-            card_to_check = Card(self.players[0].get_trump_rank(), new_trump_suit)
-            cnt_to_check = new_trump_suit_cnt
-
-        if self.players[current_drawer].card_count(card_to_check) >= cnt_to_check:
-            if new_trump_suit_cnt > self.trump_suit_cnt:
-                print("Set trump suit to: " + new_trump_suit)
-                self.trump_suit = new_trump_suit
-                self.trump_suit_cnt = new_trump_suit_cnt
-            else:
-                print("You don't have the cards necessary for that liang")
-        else:
-            print("You don't have the cards necessary for that liang")
+        #Outdated function
+        "This function was used for testing while prototyping with a text-based version of the game"
 
     def card_value(self, card):
         """
         Returns a relative value of the card.
-        Lowest card in a suit is 1, second lowest is 2, etc... highest (usually A) is 12 because one rank is trump
-        All cards of trump suit and not in the top 12 will have 100 added to signify trump
-        ex: trump_rank == 4, trump_suit == spades
-        2d: 1 3d: 2 5d: 3 ... 10d: 8 Jd: 9 Qd: 10 Kd: 11 Ad: 12
-        2s: 101 3s: 102 5s: 103 10s: 108 Js: 109 Qs: 110 Ks: 111 As: 112 4d: 113 4c: 113 4s: 114 SJo: 115 BJo: 116
-
-        ex: trump_rank == 4, trump_suit == "none" (wuzhu)
-        2d: 1 3d: 2 5d: 3 ... Ad: 12
-        4c: 114 4d: 114 4h: 114 4s: 114 SJo: 115 BJo: 116
-
+        See single_player.round_functions.rank_functions.compare_value for more detail
         :param card: found in deck.py file
         :return: int
         """
-        return rank_functions.card_value(self, card)
+        return round_functions.rank_functions.compare_value(self, card)
 
     def view_value(self, card):
         '''
@@ -172,147 +93,31 @@ class Round(object):
         :param card:
         :return:
         '''
-        card_value = self.card_value(card)
-        suit_order = {
-            'diamonds': 1,
-            'clubs': 2,
-            'hearts': 3,
-            'spades': 4
-        }
-        r_suit_order = {
-            1: 'diamonds',
-            2: 'clubs',
-            3: 'hearts',
-            4: 'spades'
-        }
-        if self.trump_suit == 'none':
-            if self.get_suit(card) == 'trump':
-                return 400+card_value
-            else:
-                if self.get_suit(card) == 'diamonds':
-                    return 300+card_value
-                if self.get_suit(card) == 'clubs':
-                    return 200+card_value
-                if self.get_suit(card) == 'hearts':
-                    return 100+card_value
-                return card_value
-        else:
-            trump_suit = self.trump_suit
-            suit_index = suit_order[trump_suit]
-            if self.get_suit(card) == 'trump':
-                return 400+card_value
-            for i in range(suit_index, suit_index+4):
-                c_index = i % 4
-                if self.get_suit(card) == r_suit_order[c_index]:
-                    return 100*(4-(i-suit_index)) + card_value
+
+        return round_functions.rank_functions.view_value(self, card)
 
     def cmp_cards(self, a, b):
-        # Compares cards in game, with consideration to the first card played
-        # returns 1 if a>b, 0 if a=b, and -1 if a<b
-        if a == b:
-            return 0
-        if a.is_big_joker:
-            return 1
-        if b.is_big_joker:
-            return -1
-        if a.is_small_joker:
-            return 1
-        if b.is_small_joker:
-            return -1
-        if a.rank == self.trump_rank and a.suit == self.trump_suit:
-            return 1
-        if b.rank == self.trump_rank and b.suit == self.trump_suit:
-            return -1
-        if a.rank == self.trump_rank and b.rank == self.trump_rank:
-            return 0
-        if a.rank == self.trump_rank:
-            return 1
-        if b.rank == self.trump_rank:
-            return -1
-
-        suit_dict = {'clubs': 1, 'diamonds': 2, 'hearts': 3, 'spades': 4, self.suit_played: 5, self.trump_suit: 6}
-        rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
-                     'K': 13, 'A': 14, self.trump_rank: 15}
-        if suit_dict[a.suit] > suit_dict[b.suit]:
-            return 1
-        elif suit_dict[a.suit] < suit_dict[b.suit]:
-            return -1
-        else:
-            if rank_dict[a.rank] > rank_dict[b.rank]:
-                return 1
-            else:
-                return -1
+        """
+        Compares cards in the context of the round. Returns 0 if cards are same, 1 if a>b, and -1 if a<b
+        :param a: Card 1
+        :param b: Card 2
+        :return: int (-1, 0, or 1)
+        """
+        return round_functions.rank_functions.cmp_cards(self, a, b)
 
     def flip_di_pai(self):
-        # Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
-        # Otherwise makes the largest card the trump rank
-        print("No liang, flipping di pai...")
-        largest_rank_suit = "none"
-        largest_rank = 1
-        rank_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12,
-                     'K': 13, 'A': 14}
-        for card in self.deck.cards:
-            print(card)
-            if card.is_big_joker or card.is_small_joker:
-                self.trump_suit = "none"
-                print("The game is now WuZhu")
-                return
-            elif card.rank == self.trump_rank:
-                self.trump_suit = card.suit
-                print("The trump suit is now %s" % card.suit)
-                return
-            else:
-                if rank_dict[card.rank] > largest_rank:
-                    largest_rank_suit = card.suit
-        self.trump_suit = largest_rank_suit
-        print("The trump suit is now %s" % self.trump_suit)
-        return
+        """
+        Flips cards from di pai until the trump rank or joker is hit, and sets the trump suit accordingly
+        Otherwise makes the largest card the trump rank
+        """
+        return round_functions.game_functions.flip_di_pai(self)
 
     def choose_di_pai(self):
-        zhuang_jia_player = self.players[self.zhuang_jia_id]
-        for card in self.deck.cards:
-            zhuang_jia_player.draw(card)
-        print(zhuang_jia_player.get_name() + ". Your hand after di pai:")
-        zhuang_jia_player.print_hand()
-        print("The trump suit is " + self.trump_suit)
-        while len(self.discards) != 8:
-            print("Enter 8 indexes you want to discard:")
-            discard_indexes = pim.get_player_input()
-            if not pim.is_valid_input(zhuang_jia_player, discard_indexes) or not len(discard_indexes) == 8:
-                continue
-            else:
-                break
-        # ADDS DISCARDS TO SELF.DISCARDS, DELETES CARDS FROM PLAYER HAND
-        for each_index in discard_indexes:
-            self.discards.append(zhuang_jia_player.get_hand()[each_index])
-        self.del_indexes(zhuang_jia_player, discard_indexes)
-
-        '''
-            print("Enter the card that you want to discard. Or, enter \'undo\' to return "
-                  "a card from the discard to your hand")
-            card_input = pim.get_player_input()
-            if card_input.lower() == 'undo':
-                print("Enter the card that you want to return to your hand")
-                if card_input == "BJo":
-                    discard_card = Card('2', 's', is_big_joker=True)
-                elif card_input == "SJo":
-                    discard_card = Card('2', 's', is_small_joker=True)
-                else:
-                    discard_card = Card(card_input[:-1], card_input[-1])
-                self.discards.remove(discard_card)
-            elif pim.is_card(card_input):
-                if card_input == "BJo":
-                    discard_card = Card('2', 's', is_big_joker=True)
-                elif card_input == "SJo":
-                    discard_card = Card('2', 's', is_small_joker=True)
-                else:
-                    discard_card = Card(card_input[:-1], card_input[-1])
-                self.discards.append(discard_card)
-            else:
-                print("Not a valid input. Please enter a valid input")
-        for card in self.discards:
-            self.players[self.zhuang_jia_id].play(card)
-            '''
+        """
+        Function that let's Zhuang Jia discard 8 cards into his di pai
+        :return: None
+        """
+        return round_functions.game_functions.choose_di_pai(self)
 
     def get_trump_info(self):
         trump_info = {
@@ -415,8 +220,6 @@ class Round(object):
             maxval = max(self.card_value(card), maxval)
         len_tractor = len(hand) // 2
         return Tractor(maxval, len_tractor)
-
-
 
     def return_pairs(self, hand):
         list_pair = []
@@ -668,8 +471,3 @@ class Round(object):
         return {'trick_winner': self.players.index(info_dict['biggest_player']),
                 'num_cards': info_dict['size']}
 
-    def get_players(self):
-        return self.players
-
-    def get_deck(self):
-        return self.deck
