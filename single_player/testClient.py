@@ -23,16 +23,15 @@ class TractorClient():
         pygame.display.set_caption("Client -1")
         self.data = None
         self.card_indices = []
+        self.rects = []
+        self.test_rect = pygame.Surface((200, 200))
+        self.test_rect.fill((255, 255, 255, 255))
 
-    def draw_stats(self):
+    def draw_test(self):
         pass
-        # draws score, trump suit
-        white = (255, 255, 255)
-        my_font = pygame.font.SysFont('comicsansms', 20)
-        score = my_font.render('Score: ', True, white)
-        trump = my_font.render('Trump: ', True, white)
-        self.screen.blit(score, [110, 0])
-        self.screen.blit(trump, [110, 20])
+        self.screen.blit(self.test_rect, [450 + 22 * (0), 445 - 0],area=self.test_rect.get_rect(), special_flags=0)
+        # self.rects.append(pygame.draw.rect(self.screen, (255, 255, 255, 255), pygame.Rect(0,0,200,200)))
+        # self.rects.append(pygame.draw.rect(self.screen, (255, 0, 0, 255), pygame.Rect(100,100,200,200)))
 
     def update(self):
         # make the game 60 fps
@@ -42,7 +41,7 @@ class TractorClient():
         self.screen.fill(0)
 
         # draws board over cleared screen
-        self.draw_stats()
+        self.draw_test()
 
         # take input
         click = None
@@ -52,6 +51,11 @@ class TractorClient():
                 exit()
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = event.pos
+                print(self.test_rect.get_rect().move(200, 200).collidepoint(click))
+                print(self.test_rect.get_rect().collidepoint(click))
+                # print(self.rects[0].collidepoint(click))
+                # print(self.rects[1].collidepoint(click))
+                print(click)
 
         # update the screen
         pygame.display.flip()

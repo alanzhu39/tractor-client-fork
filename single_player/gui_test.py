@@ -8,7 +8,7 @@ test_played = list(my_client.deck_dict.keys())[25:27]
 test_data = []
 for i in range(4):
     test_data += [i, test_hand, test_played]
-test_data += ['True', 'True', 'True', 'test_score', 'test_suit']
+test_data += ['True', 'True', 'True', 'test_score', 'test_suit', '1']
 my_client.set_data(test_data)
 
 while True:
