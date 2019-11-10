@@ -69,31 +69,6 @@ class Card(object):
     def get_is_small_joker(self):
         return True if self.is_small_joker else False
 
-class Pair(object):
-
-    def __init__(self, card, suit):
-        self.card = card
-        self.suit = suit
-
-    def get_card(self):
-        return self.card
-
-    def get_suit(self):
-        return self.suit
-
-    def __str__(self):
-        return 'pair ' + str(self.card)
-
-class Tractor(object):
-    def __init__(self, highest_card_value, length):
-        self.high_card_value = highest_card_value
-        self.length = length
-
-    def get_highest_value(self):
-        return self.high_card_value
-
-    def get_tractor_length(self):
-        return self.length
 
 class Deck(object):
     def __init__(self):

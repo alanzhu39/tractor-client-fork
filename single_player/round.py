@@ -12,7 +12,10 @@ dealing, compare cards, and playing
 from typing import Dict, Any
 
 from single_player.deck import *
-from single_player.round_functions import game_functions, outdated_functions, rank_functions
+from single_player.round_functions import game_functions, outdated_functions, rank_functions, pair_functions
+from single_player.round_functions.pair_functions import Pair
+from single_player.round_functions.tractor_functions import Tractor
+
 
 connections = []
 
@@ -297,6 +300,53 @@ class Round(object):
                 "hand_type": hand_type,
                 "size": len(fpi_hand),
                 'points': self.get_num_points(fpi_hand)}
+
+    def get_first_player_move2(self, first_player):
+        self.current_player = self.players.index(first_player)
+        fp_input = self.get_player_input(self.current_player)
+
+        # Check if input is a list of valid indexes
+        if not self.is_valid_input(first_player, fp_input):
+            return {"move_code": "invalid indexes"}
+        fp_hand = first_player.get_hand()
+
+        # CHECK IF SELECtiON IS ONE SUIT
+        suit_list = []
+        for each_index in fp_input:
+            suit_list.append(self.get_suit(first_player.get_hand()[each_index]))
+        suit_set = set(suit_list)
+        if len(suit_set) != 1:
+            return {"move_code": "suit_set error"}
+
+        else:
+            cur_suit = self.get_suit(first_player.get_hand()[fp_input[0]])
+        fpi_hand = []
+        hand_type = []
+        for index in fp_input:
+            fpi_hand.append(fp_hand[index])
+
+        # FOR NOW, JUST CHECK IF PAIR OR SINGLE
+        if not self.is_valid_fpi(fpi_hand):
+            return {"move_code": "invalid move"}
+
+        # CHECK FOR LARGEST TRACTOR, LARGEST PAIR, THEN LARGEST SINGLE
+        if len(fpi_hand) > 2: #Should be a valid tractor at this point
+            fpi_response = [self.return_tractors(fpi_hand)]
+            hand_type.append("tractor" + str(len(fpi_hand) // 2))
+        if len(fpi_hand) == 2:
+            fpi_response = self.return_pairs(fpi_hand)
+            hand_type.append('pair')
+        elif len(fpi_hand) == 1:
+            fpi_response = self.return_singles(fpi_hand)
+            hand_type.append('single')
+        return {"move_code": "valid",
+                "index_response": fp_input,
+                "suit": cur_suit,
+                "fpi_hand": fpi_response,
+                "hand_type": hand_type,
+                "size": len(fpi_hand),
+                'points': self.get_num_points(fpi_hand)}
+
 
     def num_cards_in_suit(self, hand, suit):
         total = 0
