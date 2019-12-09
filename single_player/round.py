@@ -86,7 +86,7 @@ class Round(object):
     def liang_query(self, current_drawer):
         #Outdated function
         "This function was used for testing while prototyping with a text-based version of the game"
-        pass
+        return game_functions.liang_query(self, current_drawer)
 
     def card_value(self, card):
         """

@@ -1,3 +1,5 @@
+from single_player.deck import *
+
 def play_round(self):
     self.game_start = True
     self.deal()
@@ -38,9 +40,14 @@ def deal(self):
     current_drawer = self.zhuang_jia_id
     while len(self.deck) > self.num_di_pai:
         self.players[current_drawer].draw(self.deck.pop())
-        print(self.players[current_drawer].name)
-        self.players[current_drawer].print_hand()
-        # self.liang_query(current_drawer)
+        # print(self.players[current_drawer].name)
+        # self.players[current_drawer].print_hand()
+        while True:
+            if self.liang_query(current_drawer) == 'space':
+                self.client_input = ''
+                break
+        for player in self.players:
+            player.hand.sort(key=self.view_value, reverse=True)
         current_drawer = (current_drawer + 1) % 4
     # no liang -> flip di pai
     if self.trump_suit == "none":
@@ -50,6 +57,43 @@ def deal(self):
     # zhuang jia chooses 8 cards for di pai
     self.choose_di_pai()
 
+def liang_query(self, current_drawer):
+    # format is "suit cnt" or "SJo 2" or "BJo 2"
+    # print("Liang?")
+    response = get_player_input(self, current_drawer)
+    # space means skip liang
+    if response == 'space':
+        # print("No liang, continuing")
+        return response
+    # check for validity of the response
+    if is_valid_input(self, self.players[current_drawer], response):
+        response = [self.players[current_drawer].get_hand()[i] for i in response]
+        if len(response) > 2 or len(response) <= 0:
+            # print("invalid response, continuing")
+            return
+        if len(response) == 1:
+            if response[0].get_rank() == self.players[0].get_trump_rank() and self.trump_suit_cnt < 1:
+                self.trump_suit = response[0].get_suit()
+                self.trump_suit_cnt = 1
+                return 'space'
+        elif len(response) == 2:
+            if response[0] == response[1]:
+                if response[0].get_rank() == self.players[0].get_trump_rank() and self.trump_suit_cnt < 2:
+                    self.trump_suit = response[0].get_suit()
+                    self.trump_suit_cnt = 2
+                    return 'space'
+                elif response[0].get_is_joker():
+                    self.trump_suit = 'wu zhu'
+                    self.trump_suit_cnt = 3
+                    return 'space'
+                else:
+                    return
+            else:
+                return
+        else:
+            return
+    else:
+        return
 
 def flip_di_pai(self):
     """
@@ -90,7 +134,7 @@ def choose_di_pai(self):
     zhuang_jia_player.print_hand()
     print("The trump suit is " + self.trump_suit)
     while len(self.discards) != 8:
-        print("Enter 8 indexes you want to discard:")
+        # print("Enter 8 indexes you want to discard:")
         discard_indexes = self.get_player_input(self.zhuang_jia_id)
         if not len(discard_indexes) == 8 or not self.is_valid_input(zhuang_jia_player, discard_indexes):
             continue
@@ -105,9 +149,11 @@ def choose_di_pai(self):
     self.del_indexes(zhuang_jia_player, discard_indexes)
 
 def get_player_input(self, curr_player):
-    # just player indexes, check if integerse
+    # just player indexes, check if integers
     self.current_player = curr_player
     response = self.client_input
+    if len(response) == 1 and response[0] == 'space':
+        return 'space'
 
     integer_list = [int(s) for s in response if s.isdigit()]
     return integer_list

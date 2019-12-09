@@ -239,6 +239,8 @@ class TractorClient():
                     exit()
                 elif event.type == pygame.MOUSEBUTTONUP:
                     click = event.pos
+                elif event.type == pygame.KEYUP:
+                    click = event.key
 
             self.data = self.parse_data(self.send_data(click))
 
@@ -248,6 +250,11 @@ class TractorClient():
     def send_data(self, position):
         reply = self.net.send('x')
         if not position:
+            return reply
+        if type(position) == int:
+            if position == 32:
+                print('space')
+                return self.net.send('space')
             return reply
         player_hand = self.data[self.playerID * 3 + 1]
         left_offset = (22 * (len(player_hand) - 1) + 100) / 2

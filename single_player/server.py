@@ -45,7 +45,7 @@ def threaded_client(conn):
             data = conn.recv(2048)
             reply = data.decode('utf-8')
             curr_player = r.get_current_player()
-            print(curr_player)
+            # print(curr_player)
             if currentId == curr_player:
                 # if reply != 'x': print(reply)
                 response = reply.strip('[').strip(']')
