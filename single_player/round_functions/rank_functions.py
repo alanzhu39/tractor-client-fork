@@ -1,5 +1,6 @@
 def compare_value(self, card):
     """
+    KNOWN AS self.CARD_VALUE(CARD)
     Returns a relative value of the card.
     Lowest card in a suit is 1, second lowest is 2, etc... highest (usually A) is 12 because one rank is trump
     All cards of trump suit and not in the top 12 will have 100 added to signify trump
@@ -58,22 +59,41 @@ def view_value(self, card):
         2: 'hearts',
         3: 'spades'
     }
-    if self.trump_suit == 'none':
-        if self.get_suit(card) == 'trump':
+
+    if self.get_suit(card) == 'trump':
+        """Originally, Big Joker is 116, SJo 115, Zhu Rank 114, Fu Rank 113, rest doesn't matter \
+        We want to change so that we arbitarily assign order to the Ranks 113, 114, 115, 116 (116 being the Zhu)
+        Sjo will be 117, BJo will be 118. And we will add 400 onto this.
+        """
+        if card_value <= 112:
             return 400+card_value
-        else:
-            if self.get_suit(card) == 'diamonds':
-                return 300+card_value
-            if self.get_suit(card) == 'clubs':
-                return 200+card_value
-            if self.get_suit(card) == 'hearts':
-                return 100+card_value
-            return card_value
+        if card.is_big_joker:
+            return 518
+        if card.is_small_joker:
+            return 517
+        if self.trump_suit == 'none' or self.trump_suit == 'spades':
+            order = {'spades': 3, 'hearts': 2, 'clubs': 1, 'diamonds': 0}
+        if self.trump_suit == 'hearts':
+            order = {'hearts': 3, 'clubs':2, 'diamonds': 1, 'spades': 0}
+        if self.trump_suit == 'clubs':
+            order = {'clubs': 3, 'diamonds': 2, 'spades': 1, 'hearts': 0}
+        if self.trump_suit == 'diamonds':
+            order = {'diamonds': 3, 'spades': 2, 'hearts': 1, 'clubs': 0}
+        return 413 + order[card.get_suit()]
+
+
+
+    if self.trump_suit == 'none':
+        if self.get_suit(card) == 'spades':
+            return 300+card_value
+        if self.get_suit(card) == 'hearts':
+            return 200+card_value
+        if self.get_suit(card) == 'clubs':
+            return 100+card_value
+        return card_value
     else:
         trump_suit = self.trump_suit
         suit_index = suit_order[trump_suit]
-        if self.get_suit(card) == 'trump':
-            return 400+card_value
         for i in range(suit_index, suit_index+4):
             c_index = i % 4
             if self.get_suit(card) == r_suit_order[c_index]:

@@ -9,6 +9,7 @@ class Hand(object):
         self.round = cur_round
         self.suit = suit
         self.pairs = []
+        self.retrieve_pairs()
         self.tractors = {}
         for i in range(2, 17):
             self.tractors[i] = []
@@ -23,6 +24,9 @@ class Hand(object):
     def __len__(self):
         return len(self.hand)
 
+    def sorted_hand(self):
+        return sorted(self.hand, key=self.round.view_value)
+
     def num_in_suit(self, suit):
         counter = 0
         for each_card in self.hand:
@@ -31,12 +35,21 @@ class Hand(object):
         return counter
 
     def retrieve_pairs(self):
-        sorted_hand = sorted(self.hand, key = self.round.view_value)
+        sorted_hand = sorted(self.hand, key=self.round.view_value)
         for i in range(len(sorted_hand)-1):
             if sorted_hand[i] == sorted_hand[i+1]:
                 self.pairs.append(Pair(self.round, sorted_hand[i]))
 
-    def retrieve_tractors(self, size):
+    def find_minimum_tractor(self, pair_hand, size):
+        """
+        Find the minimum tractor in a hand
+        :param size:
+        :return: an array of length SIZE containing the indexes of the pairs in self.pairs that constitute the smallest
+                    tractor of size SIZE in HAND, else None
+        """
+        pair_indexes = [i.card_value for i in pair_hand]
+        
+    def retrieve_tractors(self, pair_hand, size):
         """
         We start off by remembering our original self.hand using the copy method
         The algorithm detects the lowest tractor of size SIZE and appends it to our tractor list.
@@ -50,7 +63,8 @@ class Hand(object):
         :param size: a size n tractor contains 2n cards
         :return:
         """
-        sorted_hand = sorted(self.hand, key=self.round.view_value)
+
+
 
     def get_num_points(self):
         total = 0
