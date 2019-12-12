@@ -18,4 +18,6 @@ while True:
             exit()
         elif event.type == pygame.MOUSEBUTTONUP:
             print(event.pos)
+        elif event.type == pygame.KEYUP:
+            print(event.key)
         my_client.update(True)
