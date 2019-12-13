@@ -48,7 +48,7 @@ class Hand(object):
                     tractor of size SIZE in HAND, else None
         """
         pair_indexes = [i.card_value for i in pair_hand]
-        
+
     def retrieve_tractors(self, pair_hand, size):
         """
         We start off by remembering our original self.hand using the copy method
