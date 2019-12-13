@@ -22,7 +22,7 @@ class TractorClient():
     for rank in ranks:
         for s in suits:
             card_key = rank + suit_map[s]
-            card_file = "cards_jpeg\\" + rank + s + ".jpg"
+            card_file = "cards_jpeg/" + rank + s + ".jpg"
             my_card = pygame.transform.scale(pygame.image.load(card_file), (card_width, card_height))
             deck_dict[card_key] = my_card
             my_card = pygame.transform.scale(pygame.image.load(card_file), (small_card_width, small_card_height))
