@@ -11,8 +11,8 @@ sel = selectors.DefaultSelector()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-server = '0.0.0.0'
-port = 5554
+server = 'localhost'
+port = 5555
 
 server_ip = socket.gethostbyname(server)
 
