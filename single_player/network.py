@@ -8,6 +8,13 @@ class Network:
         # self.host = "136.152.143.112"  # For this to work on your machine this must be equal to the ipv4 address of the
         # machine running the server You can find this address by typing ipconfig in CMD and copying the ipv4
         # address. Again this must be the servers ipv4 address. This field will be the same for all your clients.
+        port_in = 0
+        while port_in == 0:
+            port_in = input("Port number? ")
+            try:
+                port_in = int(port_in)
+            except:
+                port_in = 0
         self.port = 16596
         self.host = socket.gethostbyname('0.tcp.ngrok.io')
         self.addr = (self.host, self.port)
