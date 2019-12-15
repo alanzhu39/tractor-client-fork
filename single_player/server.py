@@ -22,8 +22,9 @@ try:
 except socket.error as e:
     print(str(e))
 
-s.listen([5])
+s.listen(5)
 print("Waiting for a connection")
+print('Listening on ' + server_ip + ':' + str(port))
 
 sheng_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 rank_ids = [0, 0, 0, 0]
