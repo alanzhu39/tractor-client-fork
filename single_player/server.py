@@ -22,7 +22,7 @@ try:
 except socket.error as e:
     print(str(e))
 
-s.listen()
+s.listen([5])
 print("Waiting for a connection")
 
 sheng_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
