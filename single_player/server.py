@@ -72,7 +72,40 @@ while len(myConns.connections) < 4:
     start_new_thread(threaded_client, (conn,))
     myConns.connections.append(conn)
 
-r.play_round()
+while True:
+    r = Round(players)
+    pts = r.play_round()
+
+    if pts == 0:
+        # increase trump rank of players[zj_id] and players[(zj_id+2)%4] by 3
+        rank_ids[zj_id] += 3
+        rank_ids[(zj_id + 2) % 4] += 3
+        zj_id = (zj_id + 2) % 4
+    elif pts < 40:
+        # increase trump rank of players[zj_id] and players[(zj_id+2)%4] by 2
+        rank_ids[zj_id] += 2
+        rank_ids[(zj_id + 2) % 4] += 2
+        zj_id = (zj_id + 2) % 4
+    elif pts < 80:
+        # increase trump rank of players[zj_id] and players[(zj_id+2)%4] by 1
+        rank_ids[zj_id] += 1
+        rank_ids[(zj_id + 2) % 4] += 1
+        zj_id = (zj_id + 2) % 4
+    else:
+        num_shengs = (pts - 80) // 40
+        # increase trump rank of players[(zj_id+1)%4] and players[(zj_id+3)%4] by num_shengs
+        rank_ids[(zj_id + 1) % 4] += num_shengs
+        rank_ids[(zj_id + 3) % 4] += num_shengs
+        zj_id = (zj_id + 1) % 4
+
+    for i in range(4):
+        players[i].set_is_zhuang_jia(False)
+        players[i].set_trump_rank(sheng_order[rank_ids[i]])
+    players[zj_id].set_is_zhuang_jia(True)
+
+    if rank_ids[zj_id] >= len(sheng_order):
+        print(players[zj_id].get_name() + ' and ' + players[(zj_id + 2) % 4].get_name() + 'win!')
+        break
 
 '''
 data = client_conns[0].recv(2048)
