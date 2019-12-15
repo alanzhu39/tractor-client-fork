@@ -42,12 +42,10 @@ def deal(self):
         self.players[current_drawer].draw(self.deck.pop())
         # print(self.players[current_drawer].name)
         # self.players[current_drawer].print_hand()
-        '''
         while True:
             if self.liang_query(current_drawer) == 'space':
                 self.client_input = ''
                 break
-        '''
         for player in self.players:
             player.hand.sort(key=self.view_value, reverse=True)
         current_drawer = (current_drawer + 1) % 4
