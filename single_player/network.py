@@ -15,7 +15,7 @@ class Network:
                 port_in = int(port_in)
             except:
                 port_in = 0
-        self.port = 16596
+        self.port = port_in
         self.host = socket.gethostbyname('0.tcp.ngrok.io')
         self.addr = (self.host, self.port)
         print(self.addr)
