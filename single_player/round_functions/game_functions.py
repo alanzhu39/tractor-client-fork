@@ -172,8 +172,15 @@ from single_player.round_functions.hand_functions import Hand, SecondaryHand
 
 
 def play_turn(self, sp_index):
+    biggest_player = None
+    biggest_hand = None
+    first_hand = None
     def get_first_player_move(first_player):
+        nonlocal biggest_player
+        nonlocal biggest_hand
+        nonlocal first_hand
         self.current_player = self.players.index(first_player)
+        biggest_player = first_player
         fp_input = self.get_player_input(self.current_player)
 
         # Check if input is a list of valid indexes
@@ -187,7 +194,6 @@ def play_turn(self, sp_index):
         if not fp_playhand.check_is_one_suit(fp_playhand.suit):
             return get_first_player_move(first_player)
 
-        cur_suit = fp_playhand.suit
 
         # FOR NOW, JUST CHECK IF PAIR OR SINGLE
         '''
@@ -200,9 +206,10 @@ def play_turn(self, sp_index):
 
         # delete cards once everything is processed
         fp_hand.del_indexes(fp_input)
-        return fp_playhand
+        biggest_hand = fp_playhand
+        first_hand = fp_playhand
 
-    def get_secondary_player_move(player, first_hand):
+    def get_secondary_player_move(player):
         nonlocal biggest_hand
         nonlocal biggest_player
         self.current_player = self.players.index(player)
@@ -217,69 +224,9 @@ def play_turn(self, sp_index):
         np_playhand = SecondaryHand(first_hand, np_playhand_list, self, cur_suit) #Should we pass in suit here?
 
         np_playhand.check_is_legal_move()
-        # CHECK IF PLAYED PROPER NUMBER OF SINGLES AND PAIR IN SAME SUIT
-        min_singles = min(self.num_cards_in_suit(np_hand, cur_suit), hand_size)
-        if not self.num_cards_in_suit(npi_hand, cur_suit) == min_singles:
-            return {'move_code': 'insufficient number of current suit'}
-        if min_singles == 2:
-            min_pair = min(self.num_pairs_in_suit(np_hand, cur_suit), 1)
-            if not self.num_pairs_in_suit(npi_hand, cur_suit) == min_pair:
-                return {'move_code': 'insufficient number of pairs'}
-        if min_singles > 2:
-            tractor_length = hand_size // 2
-            min_pair = min(tractor_length, self.num_pairs_in_suit(np_hand, cur_suit))
-            if not self.num_pairs_in_suit(npi_hand, cur_suit) == min_pair:
-                return {'move_code': 'insufficient number of pairs'}
-            for i in range(tractor_length, 1, -1):
-                if self.contains_tractor_of_length_in_suit(np_hand, tractor_length, cur_suit):
-                    if not self.contains_tractor_of_length_in_suit(npi_hand, tractor_length, cur_suit):
-                        return {'move_code': 'insufficient number of tractors of length ' + str(tractor_length)}
-                    else:
-                        break  # Stops checking if they have played a tractor or not if their largest tractor is already played
-        has_bigger_hand = np_playhand > biggest_hand
-        biggest_hand = np_playhand if has_bigger_hand else biggest_hand
-        biggest_player = player if has_bigger_hand else biggest_player
-        if hand_size == 1:  # single card
-            npi_response = self.return_singles(npi_hand)
-            has_bigger_single = self.cmp_cards(npi_response[0], biggest_hand[0]) > 0
-            return {'move_code': 'valid',
-                    'index_response': np_input,
-                    'npi_hand': npi_response,
-                    'biggest_hand': npi_response if has_bigger_single else biggest_hand,
-                    'biggest_player': player if has_bigger_single else biggest_player,
-                    'points': self.get_num_points(npi_hand)}
-
-        if hand_size == 2 and self.contains_pair(npi_hand):
-            npi_response = self.return_pairs(npi_hand)
-            has_bigger_pair = self.pair_gt(npi_response[0], biggest_hand[0])
-            return {'move_code': 'valid',
-                    'index_response': np_input,
-                    'npi_hand': npi_response,
-                    'biggest_hand': npi_response if has_bigger_pair else biggest_hand,
-                    'biggest_player': player if has_bigger_pair else biggest_player,
-                    'points': self.get_num_points(npi_hand)}
-
-        if hand_size > 2:  # TRACTOR ANALYSIS
-            if self.contains_tractor_of_length_in_suit(npi_hand, tractor_length,
-                                                       cur_suit) or self.contains_tractor_of_length_in_suit(npi_hand,
-                                                                                                            tractor_length,
-                                                                                                            'trump'):
-                our_tractor = self.return_tractors(npi_hand)
-                their_tractor = biggest_hand[0]
-                has_bigger_tractor = self.tractor_gt(our_tractor, their_tractor)
-                return {'move_code': 'valid',
-                        'index_response': np_input,
-                        'npi_hand': [our_tractor] if has_bigger_tractor else biggest_hand,
-                        'biggest_hand': player if has_bigger_tractor else biggest_player,
-                        'points': self.get_num_points(npi_hand)}
-
-        npi_response = self.return_singles(npi_hand)
-        return {'move_code': 'valid',
-                'index_response': np_input,
-                'npi_hand': npi_response,
-                'biggest_hand': biggest_hand,
-                'biggest_player': biggest_player,
-                'points': self.get_num_points(npi_hand)}
+        # Check if it's a legal move
+        "To-do: Add points to current_turn_points" \
+        " Check if this hand greater than previous biggest hand, update if so"
 
     self.cards_played = {0: [], 1: [], 2: [], 3: []}
     first_player = self.players[sp_index]
@@ -288,7 +235,7 @@ def play_turn(self, sp_index):
 
     first_player.print_hand()
 
-    first_hand = self.get_first_player_move(first_player)
+    self.get_first_player_move(first_player)
 
     self.current_player = 5
     self.client_input = ''
@@ -296,12 +243,7 @@ def play_turn(self, sp_index):
     self.cards_played[sp_index] = first_hand
     current_turn_points = 0
     current_turn_points += first_hand.get_num_points()
-    '''info_dict = {'suit': fpi['suit'],
-                 'hand_type': fpi['hand_type'],
-                 'size': fpi['size'],
-                 'biggest_hand': fpi['fp_playhand'],
-                 'biggest_player': first_player}
-    '''
+
     biggest_hand = first_hand
     biggest_player = first_player
 
@@ -313,7 +255,7 @@ def play_turn(self, sp_index):
               ' Current turn points: ' + str(current_turn_points))
         cur_player.print_hand()
 
-        npi = self.get_secondary_player_move(cur_player, info_dict)
+        npi = self.get_secondary_player_move(cur_player)
         self.current_player = 5
         self.client_input = ''
         for index in npi['index_response']:
