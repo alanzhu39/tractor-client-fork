@@ -172,9 +172,7 @@ from single_player.round_functions.hand_functions import Hand, SecondaryHand
 
 
 def play_turn(self, sp_index):
-    biggest_player = None
-    biggest_hand = None
-    first_hand = None
+
     def get_first_player_move(first_player):
         nonlocal biggest_player
         nonlocal biggest_hand
@@ -202,7 +200,6 @@ def play_turn(self, sp_index):
         if not self.is_valid_fpi(fp_playhand):
             return get_first_player_move(first_player)
 
-        # CHECK FOR LARGEST TRACTOR, LARGEST PAIR, THEN LARGEST SINGLE
 
         # delete cards once everything is processed
         fp_hand.del_indexes(fp_input)
@@ -217,7 +214,7 @@ def play_turn(self, sp_index):
         print("Current suit: " + cur_suit + ", current hand size: " + len(first_hand))
         np_input = self.get_player_input(self.current_player)
         if not self.is_valid_input(player, np_input) or not len(first_hand) == len(np_input):
-            return get_secondary_player_move(player, first_hand)
+            return get_secondary_player_move(player)
 
         np_hand = Hand(player.get_hand(), self)
         np_playhand_list = [np_hand.hand[each_index] for each_index in np_input]
@@ -228,6 +225,12 @@ def play_turn(self, sp_index):
         "To-do: Add points to current_turn_points" \
         " Check if this hand greater than previous biggest hand, update if so"
 
+
+    biggest_player = None
+    biggest_hand = None
+    first_hand = None
+    current_turn_points = 0
+
     self.cards_played = {0: [], 1: [], 2: [], 3: []}
     first_player = self.players[sp_index]
     print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
@@ -235,13 +238,13 @@ def play_turn(self, sp_index):
 
     first_player.print_hand()
 
-    self.get_first_player_move(first_player)
+    get_first_player_move(first_player)
 
     self.current_player = 5
     self.client_input = ''
 
     self.cards_played[sp_index] = first_hand
-    current_turn_points = 0
+
     current_turn_points += first_hand.get_num_points()
 
     biggest_hand = first_hand
@@ -269,6 +272,7 @@ def play_turn(self, sp_index):
         self.attacker_points += current_turn_points
 
     print(info_dict['biggest_player'].get_name() + ' won the hand with ' + str(npi['biggest_hand'][0]))
+
 
     return {'trick_winner': self.players.index(info_dict['biggest_player']),
             'num_cards': info_dict['size']}
