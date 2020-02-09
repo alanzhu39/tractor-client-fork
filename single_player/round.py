@@ -438,7 +438,6 @@ class Round(object):
             del player.get_hand()[index]
 
     def play_turn(self, sp_index):
-        self.cards_played = {0: [], 1: [], 2: [], 3: []}
         first_player = self.players[sp_index]
         print("Hello " + first_player.get_name() + '. Please enter the cards you would like to play.'
                                                    ' Attacker current points: ' + str(self.attacker_points))
@@ -453,6 +452,7 @@ class Round(object):
                 break
         self.current_player = 5
         self.client_input = ''
+        self.cards_played = {0: [], 1: [], 2: [], 3: []}
         for index in fpi['index_response']:
             self.cards_played[sp_index].append(first_player.get_hand()[index])
         current_turn_points = 0
@@ -463,6 +463,7 @@ class Round(object):
                      'biggest_hand': fpi['fpi_hand'],
                      'biggest_player': first_player}
         self.del_indexes(first_player, fpi['index_response'])
+        self.suit_played = info_dict['suit']
 
         for i in range(sp_index + 1, sp_index + 4):
             cur_player_index = i % 4
